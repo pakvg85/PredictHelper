@@ -1,0 +1,112 @@
+﻿<Window x:Class="PredictHelper.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:PredictHelper"
+        mc:Ignorable="d"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+        Title="MainWindow" Height="900" Width="1300">
+
+    <Window.Resources>
+        <local:MainViewModel x:Key="MainViewModel"/>
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+        <local:BooleanValueInverter x:Key="Inverter" />
+        <local:BoolToForegroundConverter x:Key="BoolToForegroundConverter"/>
+    </Window.Resources>
+
+    <Grid DataContext="{StaticResource MainViewModel}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="3" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Grid.InputBindings>
+            <KeyBinding Command="{Binding Command2}" Key="F2"/>
+        </Grid.InputBindings>
+
+        <DockPanel Grid.Column="0"
+                   Grid.Row="0"
+                   HorizontalAlignment="Stretch"
+                   VerticalAlignment="Stretch">
+            <Button Content="{Binding Path=ButtonEditPredicatesText}"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Bottom"
+                    DockPanel.Dock="Top"
+                    Command="{Binding Command1}"/>
+
+            <ListView Visibility="{Binding Path=IsPredicatesEditing, 
+                                           Converter={StaticResource Inverter}, 
+                                           ConverterParameter={StaticResource BoolToVis}}"
+                      HorizontalAlignment="Stretch"
+                      VerticalAlignment="Stretch"
+                      HorizontalContentAlignment="Stretch"
+                      SelectedIndex="{Binding Path=PredicatesSelection}"
+                      ItemsSource="{Binding Path=Predicates, Mode=TwoWay}">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel>
+                            <TextBlock Text="{Binding Path=Value}"
+                                       Visibility="{Binding Path=IsEditing,
+                                                            Converter={StaticResource Inverter}, 
+                                                            ConverterParameter={StaticResource BoolToVis}}"/>
+                            <TextBox Text="{Binding Path=Value,
+                                                    UpdateSourceTrigger=LostFocus}"
+                                     local:UIFocusExtension.IsFocused="{Binding IsFocused}"
+                                     Visibility="{Binding Path=IsEditing,
+                                                          Converter={StaticResource BoolToVis}}">
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="LostFocus">
+                                        <i:InvokeCommandAction Command="{Binding Path=Command3,
+                                                                                 Mode=Default}"/>
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                                <TextBox.InputBindings>
+                                    <KeyBinding Command="{Binding Command3}" Key="Enter"/>
+                                </TextBox.InputBindings>
+                            </TextBox>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+            <ScrollViewer>
+                <TextBox Text="{Binding PredicatesText}"
+                         Visibility="{Binding Path=IsPredicatesEditing,
+                                              Converter={StaticResource BoolToVis}}"
+                  HorizontalAlignment="Stretch"
+                  VerticalAlignment="Stretch"
+                  TextWrapping="NoWrap"
+                  AcceptsReturn="True"/>
+            </ScrollViewer>
+        </DockPanel>
+        <GridSplitter Grid.Column="1" 
+                      ShowsPreview="False" 
+                      Width="3"
+                      HorizontalAlignment="Center" 
+                      VerticalAlignment="Stretch" />
+        <DockPanel Grid.Column="2"
+                   Grid.Row="0">
+            <TextBlock Text="{Binding Path=FoundResultsHeader}"
+                       DockPanel.Dock="Top"/>
+            <ListView ItemsSource="{Binding Path=FoundResults, Mode=TwoWay}">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <WrapPanel>
+                            <CheckBox IsChecked="{Binding Path=IsActive, Mode=TwoWay}"/>
+                            <TextBlock Text="{Binding Path=Value}"
+                                       Foreground="{Binding Path=IsActive,
+                                                            Converter={StaticResource BoolToForegroundConverter}}"
+                                       IsEnabled="{Binding Path=IsActive}">
+                            </TextBlock>
+                        </WrapPanel>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </DockPanel>
+    </Grid>
+</Window>
