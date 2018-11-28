@@ -50,7 +50,7 @@ namespace PredictHelper
                                       : ExistState == ExistState.New ? "New"
                                       : ExistState == ExistState.Updated ? "Upd"
                                       : ExistState == ExistState.ToBeDeleted ? "Del"
-                                      : throw new System.Exception("Undefined existence state");
+                                      : throw new System.Exception("Invalid ExisState value");
 
         public MappingItemViewModel()
         {

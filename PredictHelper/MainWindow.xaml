@@ -32,7 +32,7 @@
             <DockPanel LastChildFill="False">
                 <Button Content="Запустить анализ"
                     Command="{Binding Command1}"/>
-                <Button Content="Сохранить изменения"
+                <Button Content="Сохранить изменения в БД"
                     Command="{Binding Command2}"/>
             </DockPanel>
             <DockPanel LastChildFill="False">

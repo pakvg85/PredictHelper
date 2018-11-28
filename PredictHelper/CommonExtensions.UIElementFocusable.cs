@@ -2,7 +2,11 @@
 
 namespace PredictHelper
 {
-    public static class UIFocusExtension
+    /// <summary>
+    /// Расширение добавляет проперти IsFocused для UI-элемента.
+    /// Может использоваться в ListViewItemTemplate для TextBox.
+    /// </summary>
+    public static partial class CommonExtensions
     {
         public static bool GetIsFocused(DependencyObject obj)
         {
@@ -16,7 +20,7 @@ namespace PredictHelper
 
         public static readonly DependencyProperty IsFocusedProperty =
             DependencyProperty.RegisterAttached(
-                "IsFocused", typeof(bool), typeof(UIFocusExtension),
+                "IsFocused", typeof(bool), typeof(CommonExtensions),
                 new UIPropertyMetadata(false, OnIsFocusedPropertyChanged));
 
         private static void OnIsFocusedPropertyChanged(

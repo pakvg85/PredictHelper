@@ -60,17 +60,22 @@
     </ApplicationDefinition>
     <Compile Include="BooleanValueInverter.cs" />
     <Compile Include="BoolToForegroundConverter.cs" />
+    <Compile Include="CommonExtensions.DataTable.cs" />
+    <Compile Include="CommonExtensions.Sql.cs" />
+    <Compile Include="ContentTypeDto.cs" />
     <Compile Include="ContentTypeItemViewModel.cs" />
-    <Compile Include="DBProvider.cs" />
+    <Compile Include="DBProviderContentTypes.cs" />
+    <Compile Include="DBProviderPredicates.cs" />
+    <Compile Include="DBProviderBase.cs" />
     <Compile Include="ExistState.cs" />
     <Compile Include="MappingItemViewModel.cs" />
     <Compile Include="MappingKey.cs" />
     <Compile Include="ObservableCollectionExt.cs" />
-    <Compile Include="PredicateDTO.cs" />
+    <Compile Include="PredicateDto.cs" />
     <Compile Include="PredicateItemViewModel.cs" />
-    <Compile Include="PredicateMappingDTO.cs" />
+    <Compile Include="PredicateMappingDto.cs" />
     <Compile Include="RelayCommand.cs" />
-    <Compile Include="UIFocusExtension.cs" />
+    <Compile Include="CommonExtensions.UIElementFocusable.cs" />
     <Compile Include="ViewModelBase.cs" />
     <Compile Include="ViewModelBaseWithStore.cs" />
     <Page Include="MainWindow.xaml">

@@ -11,6 +11,7 @@ namespace PredictHelper
 {
     public class MainViewModel : ViewModelBase
     {
+        const int TestPredicateGroupId = 101;
         const string cEditPredicatesText = "Редактировать все предикты";
         const string cSavePredicatesText = "Сохранить";
 
@@ -87,35 +88,43 @@ namespace PredictHelper
         }
 
         private ICommand _command1;
-        public ICommand Command1 => _command1 ?? (_command1 = new RelayCommand(o => Command1Action()));
+        public ICommand Command1 => _command1 ?? (_command1 = new RelayCommand(o => ProcessAllPredicates()));
         private ICommand _command2;
-        public ICommand Command2 => _command2 ?? (_command2 = new RelayCommand(o => Command2Action()));
+        public ICommand Command2 => _command2 ?? (_command2 = new RelayCommand(o => SaveToDB()));
         private ICommand _command3;
-        public ICommand Command3 => _command3 ?? (_command3 = new RelayCommand(o => Command3Action(o)));
+        public ICommand Command3 => _command3 ?? (_command3 = new RelayCommand(o => OnDeleteButtonPressed(o)));
 
-        public Dictionary<int, ContentType> ContentTypesDict = new Dictionary<int, ContentType>();
+        public Dictionary<int, ContentType> ContentTypesDict;
 
         public MainViewModel()
         {
-            const int TestPredicateGroupId = 101;
-
             Predicates = new ObservableCollectionExt<PredicateItemViewModel>();
 
             try
             {
-                var lines = File.ReadLines(@"..\..\..\..\ContentTypesDb.txt");
-                ContentTypesDict.Clear();
-                foreach (var line in lines)
-                {
-                    var item = line.Split('\t');
-                    var contentTypeId = int.Parse(item[0]);
-                    var contentTypeName = item[1];
-                    ContentTypesDict.Add(contentTypeId, new ContentType
+                //var lines = File.ReadLines(@"..\..\..\..\ContentTypesDb.txt");
+                //ContentTypesDict = new Dictionary<int, ContentType>();
+                //foreach (var line in lines)
+                //{
+                //    var item = line.Split('\t');
+                //    var contentTypeId = int.Parse(item[0]);
+                //    var contentTypeName = item[1];
+                //    ContentTypesDict.Add(contentTypeId, new ContentType
+                //    {
+                //        Id = contentTypeId,
+                //        Name = contentTypeName
+                //    });
+                //}
+
+                var connectionStringContentTypes = File.ReadAllText(@"..\..\..\..\connectionStringContentTypes.config");
+                var dbContentTypes = new DBProviderContentTypes(connectionStringContentTypes);
+                var ContentTypesDict = dbContentTypes.GetContentTypes()
+                    .ToDictionary(x => x.Id, i => new ContentType
                     {
-                        Id = contentTypeId,
-                        Name = contentTypeName
-                    });
-                }
+                        Id = i.Id,
+                        Name = i.Name
+                    }
+                    );
 
                 //lines = File.ReadLines(@"..\..\..\..\PredicatesInitial.txt");
                 //Predicates.Clear();
@@ -123,21 +132,20 @@ namespace PredictHelper
                 //{
                 //    Text = x,
                 //}).ToList());
-                var connectionString = File.ReadAllText(@"..\..\..\..\connectionString.config");
-                var dbProvider = new DBProvider(connectionString);
-                var predicatesDTO = dbProvider.GetPredicatesForGroup(TestPredicateGroupId);
-                var predicatesMappingDTO = dbProvider.GetMappingsForPredicates(predicatesDTO.Select(x => x.PredicateId));
 
+                var connectionStringPredicates = File.ReadAllText(@"..\..\..\..\connectionStringPredicates.config");
+                var dbProvider = new DBProviderPredicates(connectionStringPredicates);
+                var predicatesDto = dbProvider.GetPredicates(TestPredicateGroupId);
+                var predicatesMappingDto = dbProvider.GetPredicateMappings(predicatesDto.Select(x => x.PredicateId));
                 Predicates.Clear();
-                Predicates.AddRange(predicatesDTO.Select(x => new PredicateItemViewModel
+                Predicates.AddRange(predicatesDto.Select(x => new PredicateItemViewModel
                 {
                     Text = x.Text,
                     Id = x.PredicateId
                 }).ToList());
-
                 foreach (var predicate in Predicates)
                 {
-                    var mappingList = predicatesMappingDTO
+                    var mappingList = predicatesMappingDto
                         .Where(x => x.PredicateId == predicate.Id)
                         .Select(x => new MappingItemViewModel
                         {
@@ -159,15 +167,13 @@ namespace PredictHelper
             }
 
             ButtonPredicatesText = cSavePredicatesText;
-            //IsPredicatesEditing = false;
         }
 
-        public void Command1Action()
+        public void ProcessAllPredicates()
         {
             if (SelectedIndex < 0)
                 return;
 
-            //var predicate = Predicates[SelectedIndex];
             foreach (var predicate in Predicates)
             {
                 //var CancToken = new CancellationToken();
@@ -179,11 +185,39 @@ namespace PredictHelper
             }
         }
 
-        public void Command2Action()
+        public void SaveToDB()
         {
+            var connectionString = File.ReadAllText(@"..\..\..\..\connectionString.config");
+            var dbProvider = new DBProviderPredicates(connectionString);
+            var predicatesDtoWithExistState = Predicates
+                .Where(x => x.ExistState != ExistState.Default)
+                .Select(x => new PredicateDtoWithExistState
+                {
+                    ExistState = x.ExistState,
+                    GroupId = TestPredicateGroupId,
+                    PredicateId = x.Id,
+                    Text = x.Text
+                });
+            dbProvider.SavePredicates(predicatesDtoWithExistState);
+
+            var predicateMappingsDtoWithExistState = new List<PredicateMappingDtoWithExistState>();
+            foreach (var predicate in Predicates)
+            {
+                predicateMappingsDtoWithExistState.AddRange(predicate.MappingItems
+                    .Where(x => x.ExistState != ExistState.Default)
+                    .Select(x => new PredicateMappingDtoWithExistState
+                    {
+                        ExistState = x.ExistState,
+                        ContentTypeId = x.ContentTypeId,
+                        IsActive = x.IsActive,
+                        PredicateId = predicate.Id
+                    })
+                );
+            }
+            dbProvider.SavePredicateMappings(predicateMappingsDtoWithExistState);
         }
 
-        public void Command3Action(object SelectedItems)
+        public void OnDeleteButtonPressed(object SelectedItems)
         {
             var selectedPredicatesViewModels = (SelectedItems as IList)?.OfType<PredicateItemViewModel>();
             if (selectedPredicatesViewModels == null || !selectedPredicatesViewModels.Any())
