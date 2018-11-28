@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -8,103 +9,95 @@ using System.Windows.Input;
 
 namespace PredictHelper
 {
-    public class MainViewModel : ViewModelBaseWithStore
+    public class MainViewModel : ViewModelBase
     {
         const string cEditPredicatesText = "Редактировать все предикты";
         const string cSavePredicatesText = "Сохранить";
 
-        private ICommand _command1;
-        public ICommand Command1 => _command1 ?? (_command1 = new RelayCommand(o => Command1Action()));
-        //private ICommand _command2;
-        //public ICommand Command2 => _command2 ?? (_command2 = new RelayCommand(o => EditSingle()));
+        private ObservableCollectionExt<PredicateItemViewModel> _Predicates;
+        private ObservableCollectionExt<MappingItemViewModel> _FoundResults;
+        private string _ButtonPredicatesText;
+        private string _FoundResultsHeader;
+        private int _SelectedIndex;
 
-        //public Dictionary<int, IEnumerable<MappingInfo>> PredicatesMappingDict = new Dictionary<int, IEnumerable<MappingInfo>>(); // Key - PredicateId
-        //public Dictionary<MappingKey, MappingInfo> PredicatesMappingDict = new Dictionary<MappingKey, MappingInfo>();
-        public Dictionary<int, ContentType> ContentTypesDict = new Dictionary<int, ContentType>();
-        public ObservableCollectionExt<PredicateItemViewModel> Predicates { get { return Get<ObservableCollectionExt<PredicateItemViewModel>>(); } set { Set(value); } }
-        public ObservableCollectionExt<ContentTypeItemViewModel> FoundResults { get { return Get<ObservableCollectionExt<ContentTypeItemViewModel>>(); } set { Set(value); } }
-        public string PredicatesText { get { return Get<string>(); } set { Set(value); } }
-
-        public string ButtonPredicatesText { get { return Get<string>(); } set { Set(value); } }
-        public string FoundResultsHeader { get { return Get<string>(); } set { Set(value); } }
-        //public bool IsPredicatesEditing { get { return Get<bool>(); } set { Set(value); } }
-        public int PredicatesSelection
+        public ObservableCollectionExt<PredicateItemViewModel> Predicates
+        {
+            get { return _Predicates; }
+            set
+            {
+                if (_Predicates == value)
+                    return;
+                _Predicates = value;
+                OnPropertyChanged();
+            }
+        }
+        public ObservableCollectionExt<MappingItemViewModel> FoundResults
+        {
+            get { return _FoundResults; }
+            set
+            {
+                if (_FoundResults == value)
+                    return;
+                _FoundResults = value;
+                OnPropertyChanged();
+            }
+        }
+        public string ButtonPredicatesText
+        {
+            get { return _ButtonPredicatesText; }
+            set
+            {
+                if (_ButtonPredicatesText == value)
+                    return;
+                _ButtonPredicatesText = value;
+                OnPropertyChanged();
+            }
+        }
+        public string FoundResultsHeader
+        {
+            get { return _FoundResultsHeader; }
+            set
+            {
+                if (_FoundResultsHeader == value)
+                    return;
+                _FoundResultsHeader = value;
+                OnPropertyChanged();
+            }
+        }
+        public int SelectedIndex
         {
             get
             {
-                return Get<int>();
+                return _SelectedIndex;
             }
             set
             {
-                Set(value);
+                if (_SelectedIndex == value)
+                    return;
+                _SelectedIndex = value;
+                OnPropertyChanged();
 
                 if (value < 0 || value > Predicates.Count - 1)
                     return;
 
                 var currentPredicate = Predicates.ElementAt(value);
 
-                foreach (var foundResult in FoundResults)
-                {
-                    foundResult.PropertyChanged -= FoundResult_PropertyChanged;
-                }
-
-                FoundResults.Clear();
-                FoundResults.AddRange(currentPredicate.Mapping
-                    .Select(x => new ContentTypeItemViewModel
-                    {
-                        Id = x.Key.ContentTypeId,
-                        Name = ContentTypesDict[x.Key.ContentTypeId].Name,
-                        IsActive = x.IsActive
-                    }));
-
-                foreach (var foundResult in FoundResults)
-                {
-                    foundResult.PropertyChanged += FoundResult_PropertyChanged;
-                }
-
-                //var CancToken = new CancellationToken();
-                //Task.Run(() =>
-                //{
-                //    foreach (var foundResult in FoundResults)
-                //    {
-                //        foundResult.PropertyChanged -= FoundResult_PropertyChanged;
-                //    }
-
-                //    App.Current.Dispatcher.Invoke(() =>
-                //    {
-                //        FoundResults.Clear();
-
-                //        FoundResults.AddRange(currentPredicate.Mapping
-                //            .Select(x => new ContentTypeItemViewModel
-                //            {
-                //                Id = x.Key.ContentTypeId,
-                //                Name = ContentTypesDict[x.Key.ContentTypeId].Name,
-                //                IsActive = x.IsActive
-                //            }));
-                //    });
-
-                //    foreach (var foundResult in FoundResults)
-                //    {
-                //        foundResult.PropertyChanged += FoundResult_PropertyChanged;
-                //    }
-                //},
-                //CancToken);
+                FoundResults = currentPredicate.MappingItems;
             }
         }
 
-        private void FoundResult_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            var foundContentType = (sender as ContentTypeItemViewModel);
-            var currentPredicate = Predicates.ElementAt(PredicatesSelection);
-            var mappingInfo = currentPredicate.Mapping
-                .First(x => x.Key.ContentTypeId == foundContentType.Id);
-            mappingInfo.IsActive = foundContentType.IsActive;
-        }
+        private ICommand _command1;
+        public ICommand Command1 => _command1 ?? (_command1 = new RelayCommand(o => Command1Action()));
+        private ICommand _command2;
+        public ICommand Command2 => _command2 ?? (_command2 = new RelayCommand(o => Command2Action()));
+        private ICommand _command3;
+        public ICommand Command3 => _command3 ?? (_command3 = new RelayCommand(o => Command3Action(o)));
+
+        public Dictionary<int, ContentType> ContentTypesDict = new Dictionary<int, ContentType>();
 
         public MainViewModel()
         {
             Predicates = new ObservableCollectionExt<PredicateItemViewModel>();
-            FoundResults = new ObservableCollectionExt<ContentTypeItemViewModel>();
 
             try
             {
@@ -116,28 +109,25 @@ namespace PredictHelper
                     var contentTypeId = int.Parse(item[0]);
                     var contentTypeName = item[1];
                     //ContentTypes.Add(new ContentType { Id = contentTypeId, Name = contentTypeName });
-                    ContentTypesDict.Add(contentTypeId, new ContentType { Id = contentTypeId, Name = contentTypeName });
+                    ContentTypesDict.Add(contentTypeId, new ContentType
+                    {
+                        Id = contentTypeId,
+                        Name = contentTypeName
+                    });
                 }
 
                 lines = File.ReadLines(@"..\..\..\..\PredicatesInitial.txt");
                 Predicates.Clear();
-                Predicates.AddRange(lines.Select((x, i) => new PredicateItemViewModel { Text = x, Id = i + 101 }).ToList());
+                Predicates.AddRange(lines.Select((x, i) => new PredicateItemViewModel
+                {
+                    Text = x,
+                    //ExistState = ExistState.Default
+                }).ToList());
 
                 // TODO: load PredicatesMappingDict
             }
             catch (Exception)
             {
-            }
-
-            foreach (var predict in Predicates)
-            {
-                var CancToken = new CancellationToken();
-                Task.Run(() =>
-                {
-                    var mapping = GetMappingByPredict(predict);
-                    predict.Mapping.AddRange(mapping);
-                },
-                CancToken);
             }
 
             ButtonPredicatesText = cSavePredicatesText;
@@ -146,42 +136,41 @@ namespace PredictHelper
 
         public void Command1Action()
         {
-            //IsPredicatesEditing = !IsPredicatesEditing;
-            //if (IsPredicatesEditing)
-            //{
-            //    PredicatesText = string.Join(Environment.NewLine, Predicates.Select(x => x.Value));
-            //    ButtonEditPredicatesText = cSavePredicatesText;
-            //}
-            //else
-            //{
-            //    Predicates.Clear();
-            //    var lines = Regex.Split(PredicatesText, Environment.NewLine);
-            //    Predicates.AddRange(lines.Select(x => new PredicateItemViewModel { Value = x }).ToList());
-            //    ButtonEditPredicatesText = cEditPredicatesText;
-            //}
+            if (SelectedIndex < 0)
+                return;
+
+            //var predicate = Predicates[SelectedIndex];
+            foreach (var predicate in Predicates)
+            {
+                //var CancToken = new CancellationToken();
+                //Task.Run(() =>
+                //{
+                predicate.Process(ContentTypesDict);
+                //},
+                //CancToken);
+            }
         }
 
-        public IEnumerable<MappingItemViewModel> GetMappingByPredict(PredicateItemViewModel currentPredicate)
+        public void Command2Action()
         {
-            if (string.IsNullOrEmpty(currentPredicate.Text))
-                return null;
+        }
 
-            var result = new List<MappingItemViewModel>();
-            foreach (var item in ContentTypesDict)
+        public void Command3Action(object SelectedItems)
+        {
+            var selectedPredicatesViewModels = (SelectedItems as IList)?.OfType<PredicateItemViewModel>();
+            if (selectedPredicatesViewModels == null || !selectedPredicatesViewModels.Any())
+                return;
+
+            var toBeTerminated = new List<PredicateItemViewModel>();
+            foreach (var predicate in selectedPredicatesViewModels)
             {
-                if (item.Value.Name.Contains(currentPredicate.Text))
-                {
-                    var newMappingInfo = new MappingItemViewModel
-                    {
-                        Key = new MappingKey { ContentTypeId = item.Value.Id, PredicateId = currentPredicate.Id },
-                        IsActive = true
-                    };
-                    result.Add(newMappingInfo);
-                }
+                if (predicate.ExistState == ExistState.New)
+                    toBeTerminated.Add(predicate);
+                else
+                    predicate.ExistState = ExistState.ToBeDeleted;
             }
-            //if (!PredicatesMappingDict.ContainsKey(currentPredicate.Id))
-            //    PredicatesMappingDict.Add(currentPredicate.Id, result);
-            return result;
+
+            Predicates.RemoveRange(toBeTerminated);
         }
     }
 }

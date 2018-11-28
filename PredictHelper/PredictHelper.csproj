@@ -61,12 +61,14 @@
     <Compile Include="BooleanValueInverter.cs" />
     <Compile Include="BoolToForegroundConverter.cs" />
     <Compile Include="ContentTypeItemViewModel.cs" />
+    <Compile Include="ExistState.cs" />
     <Compile Include="MappingItemViewModel.cs" />
     <Compile Include="MappingKey.cs" />
     <Compile Include="ObservableCollectionExt.cs" />
     <Compile Include="PredicateItemViewModel.cs" />
     <Compile Include="RelayCommand.cs" />
     <Compile Include="UIFocusExtension.cs" />
+    <Compile Include="ViewModelBase.cs" />
     <Compile Include="ViewModelBaseWithStore.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

@@ -1,9 +1,43 @@
 ﻿namespace PredictHelper
 {
-    public class ContentTypeItemViewModel : ViewModelBaseWithStore
+    public class ContentTypeItemViewModel : ViewModelBase
     {
-        public int Id { get { return Get<int>(); } set { Set(value); } }
-        public string Name { get { return Get<string>(); } set { Set(value); } }
-        public bool IsActive { get { return Get<bool>(); } set { Set(value); } }
+        private int _Id;
+        private string _Name;
+        private bool _IsActive;
+
+        public int Id
+        {
+            get { return _Id; }
+            set
+            {
+                if (_Id == value)
+                    return;
+                _Id = value;
+                OnPropertyChanged();
+            }
+        }
+        public string Name
+        {
+            get { return _Name; }
+            set
+            {
+                if (_Name == value)
+                    return;
+                _Name = value;
+                OnPropertyChanged();
+            }
+        }
+        public bool IsActive
+        {
+            get { return _IsActive; }
+            set
+            {
+                if (_IsActive == value)
+                    return;
+                _IsActive = value;
+                OnPropertyChanged();
+            }
+        }
     }
 }

@@ -22,37 +22,64 @@
             <ColumnDefinition Width="3*" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
+        <StackPanel Grid.ColumnSpan="3"
+                   Grid.Row="0">
+            <DockPanel LastChildFill="False">
+                <Button Content="Запустить анализ"
+                    Command="{Binding Command1}"/>
+                <Button Content="Сохранить изменения"
+                    Command="{Binding Command2}"/>
+            </DockPanel>
+            <DockPanel LastChildFill="False">
+                <TextBlock Text="Группа предикатов:"/>
+                <TextBox Text="Активность в процессе"
+                     IsReadOnly="True"/>
+                <TextBlock Text="Id группы:"/>
+                <TextBox Text="101"
+                     IsReadOnly="True"/>
+            </DockPanel>
+        </StackPanel>
+
         <DockPanel Grid.Column="0"
-                   Grid.Row="0"
+                   Grid.Row="1"
                    HorizontalAlignment="Stretch"
                    VerticalAlignment="Stretch">
-            <Button Content="{Binding Path=ButtonPredicatesText}"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Bottom"
-                    DockPanel.Dock="Top"
-                    Command="{Binding Command1}"/>
 
-            <DataGrid ItemsSource="{Binding Path=Predicates, Mode=TwoWay}"
-                      SelectedIndex="{Binding Path=PredicatesSelection}"
+            <DataGrid x:Name="predicatesDataGrid"
+                      ItemsSource="{Binding Path=Predicates, Mode=TwoWay}"
+                      SelectedIndex="{Binding Path=SelectedIndex}"
                       Visibility="{Binding Path=IsPredicatesEditing,
                                            Converter={StaticResource Inverter},
                                            ConverterParameter={StaticResource BoolToVis}}"
+                      CanUserDeleteRows="False"
                       AutoGenerateColumns="False">
+                <DataGrid.InputBindings>
+                    <KeyBinding Key="Delete" 
+                                Command="{Binding Path=Command3}" 
+                                CommandParameter="{Binding ElementName=predicatesDataGrid, Path=SelectedItems}"/>
+                </DataGrid.InputBindings>
+
                 <DataGrid.Resources>
                     <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="DarkGray"/>
                 </DataGrid.Resources>
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Id предикта" 
+                    <DataGridTextColumn Header="Состояние" 
+                                        IsReadOnly="True"
+                                        Binding="{Binding Path=ExistStateText}"/>
+                    <DataGridTextColumn Header="Id предиката" 
                                         IsReadOnly="True"
                                         Binding="{Binding Path=Id}"/>
-                    <DataGridTextColumn Header="Текст предикта" 
+                    <DataGridTextColumn Header="Текст предиката" 
+                                        Width="300"
                                         Binding="{Binding Path=Text}"/>
                     <DataGridTextColumn Header="Совпадений" 
-                                        Binding="{Binding Path=MatchesCount}"/>
+                                        IsReadOnly="True"
+                                        Binding="{Binding Path=MappingItemsCount}"/>
                 </DataGrid.Columns>
             </DataGrid>
             <ScrollViewer>
@@ -65,20 +92,31 @@
                   AcceptsReturn="True"/>
             </ScrollViewer>
         </DockPanel>
+
         <GridSplitter Grid.Column="1" 
+                      Grid.Row="1"
+                      Grid.RowSpan="2"
                       ShowsPreview="False" 
                       Width="3"
                       HorizontalAlignment="Center" 
                       VerticalAlignment="Stretch" />
+
+        <TextBlock Text="{Binding Path=FoundResultsHeader}"
+                   Grid.Column="2"
+                   Grid.Row="0"
+                   DockPanel.Dock="Top"/>
+
         <DockPanel Grid.Column="2"
-                   Grid.Row="0">
-            <TextBlock Text="{Binding Path=FoundResultsHeader}"
-                       DockPanel.Dock="Top"/>
+                   Grid.Row="1">
             <DataGrid ItemsSource="{Binding Path=FoundResults, Mode=TwoWay}"
                       CanUserAddRows="False"
                       CanUserDeleteRows="False"
                       AutoGenerateColumns="False">
                 <DataGrid.Columns>
+                    <DataGridTextColumn Header="Состояние" 
+                                        IsReadOnly="True"
+                                        Binding="{Binding Path=ExistStateText}"/>
+
                     <DataGridTemplateColumn Header="Активен">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
@@ -93,7 +131,7 @@
 
                     <DataGridTextColumn Header="Id документа" 
                                         IsReadOnly="True"
-                                        Binding="{Binding Path=Id}"/>
+                                        Binding="{Binding Path=ContentTypeId}"/>
                     <DataGridTextColumn Header="Заголовок документа" 
                                         IsReadOnly="True"
                                         Binding="{Binding Path=Name}"/>
