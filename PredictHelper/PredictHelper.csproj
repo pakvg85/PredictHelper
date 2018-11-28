@@ -60,7 +60,9 @@
     </ApplicationDefinition>
     <Compile Include="BooleanValueInverter.cs" />
     <Compile Include="BoolToForegroundConverter.cs" />
-    <Compile Include="FoundResultItemViewModel.cs" />
+    <Compile Include="ContentTypeItemViewModel.cs" />
+    <Compile Include="MappingItemViewModel.cs" />
+    <Compile Include="MappingKey.cs" />
     <Compile Include="ObservableCollectionExt.cs" />
     <Compile Include="PredicateItemViewModel.cs" />
     <Compile Include="RelayCommand.cs" />

@@ -1,24 +1,15 @@
-﻿using System.Windows.Input;
-
-namespace PredictHelper
+﻿namespace PredictHelper
 {
     public class PredicateItemViewModel : ViewModelBaseWithStore
     {
-        public string Value { get { return Get<string>(); } set { Set(value); } }
-        public bool IsEditing { get { return Get<bool>(); } set { Set(value); } }
-        public bool IsFocused { get { return Get<bool>(); } set { Set(value); } }
-
-        public ICommand Command3 { get; set; }
+        public int Id { get { return Get<int>(); } set { Set(value); } }
+        public string Text { get { return Get<string>(); } set { Set(value); } }
+        public ObservableCollectionExt<MappingItemViewModel> Mapping { get { return Get<ObservableCollectionExt<MappingItemViewModel>>(); } set { Set(value); } }
+        public int MatchesCount { get { return Mapping?.Count ?? -1; } private set { } }
 
         public PredicateItemViewModel()
         {
-            Command3 = new RelayCommand(o => EditSingle());
-        }
-
-        public void EditSingle()
-        {
-            IsEditing = false;
-            IsFocused = false;
+            Mapping = new ObservableCollectionExt<MappingItemViewModel>();
         }
     }
 }

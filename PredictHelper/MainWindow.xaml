@@ -17,63 +17,44 @@
 
     <Grid DataContext="{StaticResource MainViewModel}">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="2*" />
             <ColumnDefinition Width="3" />
-            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="3*" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <Grid.InputBindings>
-            <KeyBinding Command="{Binding Command2}" Key="F2"/>
-        </Grid.InputBindings>
-
         <DockPanel Grid.Column="0"
                    Grid.Row="0"
                    HorizontalAlignment="Stretch"
                    VerticalAlignment="Stretch">
-            <Button Content="{Binding Path=ButtonEditPredicatesText}"
+            <Button Content="{Binding Path=ButtonPredicatesText}"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Bottom"
                     DockPanel.Dock="Top"
                     Command="{Binding Command1}"/>
 
-            <ListView Visibility="{Binding Path=IsPredicatesEditing, 
-                                           Converter={StaticResource Inverter}, 
-                                           ConverterParameter={StaticResource BoolToVis}}"
-                      HorizontalAlignment="Stretch"
-                      VerticalAlignment="Stretch"
-                      HorizontalContentAlignment="Stretch"
+            <DataGrid ItemsSource="{Binding Path=Predicates, Mode=TwoWay}"
                       SelectedIndex="{Binding Path=PredicatesSelection}"
-                      ItemsSource="{Binding Path=Predicates, Mode=TwoWay}">
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel>
-                            <TextBlock Text="{Binding Path=Value}"
-                                       Visibility="{Binding Path=IsEditing,
-                                                            Converter={StaticResource Inverter}, 
-                                                            ConverterParameter={StaticResource BoolToVis}}"/>
-                            <TextBox Text="{Binding Path=Value,
-                                                    UpdateSourceTrigger=LostFocus}"
-                                     local:UIFocusExtension.IsFocused="{Binding IsFocused}"
-                                     Visibility="{Binding Path=IsEditing,
-                                                          Converter={StaticResource BoolToVis}}">
-                                <i:Interaction.Triggers>
-                                    <i:EventTrigger EventName="LostFocus">
-                                        <i:InvokeCommandAction Command="{Binding Path=Command3,
-                                                                                 Mode=Default}"/>
-                                    </i:EventTrigger>
-                                </i:Interaction.Triggers>
-                                <TextBox.InputBindings>
-                                    <KeyBinding Command="{Binding Command3}" Key="Enter"/>
-                                </TextBox.InputBindings>
-                            </TextBox>
-                        </StackPanel>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
+                      Visibility="{Binding Path=IsPredicatesEditing,
+                                           Converter={StaticResource Inverter},
+                                           ConverterParameter={StaticResource BoolToVis}}"
+                      AutoGenerateColumns="False">
+                <DataGrid.Resources>
+                    <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="DarkGray"/>
+                </DataGrid.Resources>
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Id предикта" 
+                                        IsReadOnly="True"
+                                        Binding="{Binding Path=Id}"/>
+                    <DataGridTextColumn Header="Текст предикта" 
+                                        Binding="{Binding Path=Text}"/>
+                    <DataGridTextColumn Header="Совпадений" 
+                                        Binding="{Binding Path=MatchesCount}"/>
+                </DataGrid.Columns>
+            </DataGrid>
             <ScrollViewer>
                 <TextBox Text="{Binding PredicatesText}"
                          Visibility="{Binding Path=IsPredicatesEditing,
@@ -93,20 +74,31 @@
                    Grid.Row="0">
             <TextBlock Text="{Binding Path=FoundResultsHeader}"
                        DockPanel.Dock="Top"/>
-            <ListView ItemsSource="{Binding Path=FoundResults, Mode=TwoWay}">
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <WrapPanel>
-                            <CheckBox IsChecked="{Binding Path=IsActive, Mode=TwoWay}"/>
-                            <TextBlock Text="{Binding Path=Value}"
-                                       Foreground="{Binding Path=IsActive,
-                                                            Converter={StaticResource BoolToForegroundConverter}}"
-                                       IsEnabled="{Binding Path=IsActive}">
-                            </TextBlock>
-                        </WrapPanel>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
+            <DataGrid ItemsSource="{Binding Path=FoundResults, Mode=TwoWay}"
+                      CanUserAddRows="False"
+                      CanUserDeleteRows="False"
+                      AutoGenerateColumns="False">
+                <DataGrid.Columns>
+                    <DataGridTemplateColumn Header="Активен">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <CheckBox HorizontalAlignment="Stretch" 
+                                          VerticalAlignment="Stretch" 
+                                          IsChecked="{Binding Path=IsActive, 
+                                                              Mode=TwoWay, 
+                                                              UpdateSourceTrigger=PropertyChanged}" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
+                    <DataGridTextColumn Header="Id документа" 
+                                        IsReadOnly="True"
+                                        Binding="{Binding Path=Id}"/>
+                    <DataGridTextColumn Header="Заголовок документа" 
+                                        IsReadOnly="True"
+                                        Binding="{Binding Path=Name}"/>
+                </DataGrid.Columns>
+            </DataGrid>
         </DockPanel>
     </Grid>
 </Window>
