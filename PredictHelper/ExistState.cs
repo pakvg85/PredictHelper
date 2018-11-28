@@ -3,19 +3,23 @@
     public enum ExistState
     {
         /// <summary>
-        /// Нет изменений
+        /// Инициализация не закончена
+        /// </summary>
+        Initializing = -1,
+        /// <summary>
+        /// Нет изменений (считано из БД)
         /// </summary>
         Default = 0,
         /// <summary>
-        /// Создается
+        /// Создано в текущей сессии
         /// </summary>
         New,
         /// <summary>
-        /// Изменяется
+        /// Изменено в текущей сессии
         /// </summary>
         Updated,
         /// <summary>
-        /// Помечен на удаление
+        /// Помечено на удаление
         /// </summary>
         ToBeDeleted
     }

@@ -54,8 +54,7 @@ namespace PredictHelper
 
         public MappingItemViewModel()
         {
-            ExistState = ExistState.New;
-
+            ExistState = ExistState.Initializing;
             this.PropertyChanged += MappingItemViewModel_PropertyChanged;
         }
 
@@ -66,6 +65,8 @@ namespace PredictHelper
 
             switch (ExistState)
             {
+                case ExistState.Initializing:
+                    break;
                 case ExistState.Default:
                     ExistState = ExistState.Updated;
                     //ExistStateChanged?.Invoke(this, new System.EventArgs());

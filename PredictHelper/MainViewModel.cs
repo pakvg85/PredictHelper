@@ -97,6 +97,8 @@ namespace PredictHelper
 
         public MainViewModel()
         {
+            const int TestPredicateGroupId = 101;
+
             Predicates = new ObservableCollectionExt<PredicateItemViewModel>();
 
             try
@@ -108,7 +110,6 @@ namespace PredictHelper
                     var item = line.Split('\t');
                     var contentTypeId = int.Parse(item[0]);
                     var contentTypeName = item[1];
-                    //ContentTypes.Add(new ContentType { Id = contentTypeId, Name = contentTypeName });
                     ContentTypesDict.Add(contentTypeId, new ContentType
                     {
                         Id = contentTypeId,
@@ -116,15 +117,42 @@ namespace PredictHelper
                     });
                 }
 
-                lines = File.ReadLines(@"..\..\..\..\PredicatesInitial.txt");
+                //lines = File.ReadLines(@"..\..\..\..\PredicatesInitial.txt");
+                //Predicates.Clear();
+                //Predicates.AddRange(lines.Select((x, i) => new PredicateItemViewModel
+                //{
+                //    Text = x,
+                //}).ToList());
+                var connectionString = File.ReadAllText(@"..\..\..\..\connectionString.config");
+                var dbProvider = new DBProvider(connectionString);
+                var predicatesDTO = dbProvider.GetPredicatesForGroup(TestPredicateGroupId);
+                var predicatesMappingDTO = dbProvider.GetMappingsForPredicates(predicatesDTO.Select(x => x.PredicateId));
+
                 Predicates.Clear();
-                Predicates.AddRange(lines.Select((x, i) => new PredicateItemViewModel
+                Predicates.AddRange(predicatesDTO.Select(x => new PredicateItemViewModel
                 {
-                    Text = x,
-                    //ExistState = ExistState.Default
+                    Text = x.Text,
+                    Id = x.PredicateId
                 }).ToList());
 
-                // TODO: load PredicatesMappingDict
+                foreach (var predicate in Predicates)
+                {
+                    var mappingList = predicatesMappingDTO
+                        .Where(x => x.PredicateId == predicate.Id)
+                        .Select(x => new MappingItemViewModel
+                        {
+                            ContentTypesDict = ContentTypesDict,
+                            ContentTypeId = x.ContentTypeId,
+                            IsActive = x.IsActive,
+                            ExistState = ExistState.Default
+                        });
+                    predicate.MappingItems.AddRange(mappingList);
+                }
+
+                foreach (var predicate in Predicates)
+                {
+                    predicate.ExistState = ExistState.Default;
+                }
             }
             catch (Exception)
             {

@@ -66,7 +66,7 @@ namespace PredictHelper
 
         public PredicateItemViewModel()
         {
-            ExistState = ExistState.New;
+            ExistState = ExistState.Initializing;
             MappingItems = new ObservableCollectionExt<MappingItemViewModel>();
 
             MappingItems.CollectionChanged += MappingItems_CollectionChanged;
@@ -86,6 +86,8 @@ namespace PredictHelper
 
             switch (ExistState)
             {
+                case ExistState.Initializing:
+                    break;
                 case ExistState.Default:
                     ExistState = ExistState.Updated;
                     break;
@@ -107,7 +109,6 @@ namespace PredictHelper
             var processedMappings = GetMappingsForPredicate(ContentTypesDict)
                 .ToList();
             var existentMappings = this.MappingItems
-                //.Where(x => x.ExistState != ExistState.ToBeDeleted)
                 .Select(x => x.ContentTypeId)
                 .ToList();
 
@@ -152,7 +153,7 @@ namespace PredictHelper
                     ContentTypeId = x,
                     IsActive = true,
                     ContentTypesDict = ContentTypesDict,
-                    //ExistState = ExistState.Default // TODO: убрать, должно быть 'New'
+                    ExistState = ExistState.New
                 })
                 .ToList();
 
