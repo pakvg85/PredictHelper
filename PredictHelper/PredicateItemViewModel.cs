@@ -41,6 +41,7 @@ namespace PredictHelper
                     return;
                 _MappingItems = value;
                 OnPropertyChanged();
+                OnPropertyChanged("MappingItemsCount");
             }
         }
         public ExistState ExistState
@@ -52,21 +53,14 @@ namespace PredictHelper
                     return;
                 _ExistState = value;
                 OnPropertyChanged();
-
-                OnPropertyChanged(nameof(ExistStateText));
             }
         }
 
         public int MappingItemsCount => MappingItems.Where(x => x.ExistState != ExistState.ToBeDeleted).Count();
-        public string ExistStateText => ExistState == ExistState.Default ? " "
-                                      : ExistState == ExistState.New ? "New"
-                                      : ExistState == ExistState.Updated ? "Upd"
-                                      : ExistState == ExistState.ToBeDeleted ? "Del"
-                                      : throw new System.Exception("Invalid ExisState value");
 
         public PredicateItemViewModel()
         {
-            ExistState = ExistState.Initializing;
+            ExistState = ExistState.New;
             MappingItems = new ObservableCollectionExt<MappingItemViewModel>();
 
             MappingItems.CollectionChanged += MappingItems_CollectionChanged;
@@ -81,7 +75,7 @@ namespace PredictHelper
 
         private void PredicateItemViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(ExistState) || e.PropertyName == nameof(ExistStateText))
+            if (e.PropertyName == nameof(ExistState))
                 return;
 
             switch (ExistState)
@@ -124,10 +118,10 @@ namespace PredictHelper
                 .Where(x => x.ExistState != ExistState.New)
                 .ToList();
 
-            foreach (var toBeTerminatedItem in terminateItems)
-            {
-                toBeTerminatedItem.PropertyChanged -= MappingItem_PropertyChanged;
-            }
+            //foreach (var toBeTerminatedItem in terminateItems)
+            //{
+            //    toBeTerminatedItem.PropertyChanged -= MappingItem_PropertyChanged;
+            //}
             this.MappingItems.RemoveRange(terminateItems);
 
             foreach (var item in toBeDeletedItems)
@@ -159,20 +153,21 @@ namespace PredictHelper
 
             this.MappingItems.AddRange(newMappingItemsVM);
 
-            foreach (var newMappingItem in newMappingItemsVM)
-            {
-                newMappingItem.PropertyChanged += MappingItem_PropertyChanged;
-            }
+            //foreach (var newMappingItem in newMappingItemsVM)
+            //{
+            //    newMappingItem.PropertyChanged += MappingItem_PropertyChanged;
+            //}
         }
 
-        private void MappingItem_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == nameof(MappingItemViewModel.ExistState))
-            //&& (sender as MappingItemViewModel).ExistState == ExistState.ToBeDeleted)
-            {
-                OnPropertyChanged(nameof(MappingItemsCount));
-            }
-        }
+        // TODO: при изменении статуса маппинга должно изменяться количество у предиката
+        //private void MappingItem_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        //{
+        //    if (e.PropertyName == nameof(MappingItemViewModel.ExistState))
+        //    //&& (sender as MappingItemViewModel).ExistState == ExistState.ToBeDeleted)
+        //    {
+        //        OnPropertyChanged(nameof(MappingItemsCount));
+        //    }
+        //}
 
         public IEnumerable<int> GetMappingsForPredicate(Dictionary<int, ContentType> ContentTypesDict)
         {

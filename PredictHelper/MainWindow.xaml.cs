@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using NLog;
+using System.Windows;
 
 namespace PredictHelper
 {
@@ -7,9 +8,20 @@ namespace PredictHelper
     /// </summary>
     public partial class MainWindow : Window
     {
+        public Logger GlobalLogger = LogManager.GetCurrentClassLogger();
+
         public MainWindow()
         {
             InitializeComponent();
+
+            Application.Current.DispatcherUnhandledException += Current_DispatcherUnhandledException;
+        }
+
+        private void Current_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
+        {
+            MainViewModel viewModel = (MainViewModel)mainGrid.DataContext;
+            viewModel.ProcessException(e.Exception, true);
+            e.Handled = true;
         }
     }
 }

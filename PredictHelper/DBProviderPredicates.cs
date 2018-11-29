@@ -18,20 +18,25 @@ namespace PredictHelper
         {
         }
 
-        public void SavePredicates(IEnumerable<PredicateDtoWithExistState> list)
+        /// <summary>
+        /// Сохраняет предикаты, возвращает список Id для новых созданных объектов
+        /// </summary>
+        /// <param name="list"></param>
+        /// <returns></returns>
+        public void SavePredicates(IEnumerable<PredicateDtoWithExistState> list, out IEnumerable<int> newlyCreatedIds)
         {
             var dtNew = list
                 .Where(x => x.ExistState == ExistState.New)
                 .Select(x => (PredicateDto)x)
-                .CreateDataTable();
+                .ToDataTable();
             var dtUpdated = list
                 .Where(x => x.ExistState == ExistState.Updated)
                 .Select(x => (PredicateDto)x)
-                .CreateDataTable();
+                .ToDataTable();
             var dtToBeDeleted = list
                 .Where(x => x.ExistState == ExistState.ToBeDeleted)
                 .Select(x => (PredicateDto)x)
-                .CreateDataTable();
+                .ToDataTable();
 
             using (var conn = GetNewConnection())
             {
@@ -44,14 +49,21 @@ namespace PredictHelper
                         "[dbo].[SavePredicates]",
                         0,
                         nameof(SavePredicates),
-                        (x) => { return true; },
+                        (x) =>
+                        {
+                            var newPredicateId = x.GetInt32(0);
+                            return newPredicateId;
+                        },
                         new SqlParameter("@PredicateListNew", dtNew),
                         new SqlParameter("@PredicateListUpdated", dtUpdated),
                         new SqlParameter("@PredicateListToBeDeleted", dtToBeDeleted)
                     );
+
+                    newlyCreatedIds = result;
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
+                    throw ex;
                 }
             }
         }
@@ -61,15 +73,15 @@ namespace PredictHelper
             var dtNew = list
                 .Where(x => x.ExistState == ExistState.New)
                 .Select(x => (PredicateMappingDto)x)
-                .CreateDataTable();
+                .ToDataTable();
             var dtUpdated = list
                 .Where(x => x.ExistState == ExistState.Updated)
                 .Select(x => (PredicateMappingDto)x)
-                .CreateDataTable();
+                .ToDataTable();
             var dtToBeDeleted = list
                 .Where(x => x.ExistState == ExistState.ToBeDeleted)
                 .Select(x => (PredicateMappingDto)x)
-                .CreateDataTable();
+                .ToDataTable();
 
             using (var conn = GetNewConnection())
             {
@@ -85,18 +97,19 @@ namespace PredictHelper
                         (x) => { return true; },
                         new SqlParameter("@PredicateMappingListNew", dtNew),
                         new SqlParameter("@PredicateMappingListUpdated", dtUpdated),
-                        new SqlParameter("@PredicateMappingListDeleted", dtToBeDeleted)
+                        new SqlParameter("@PredicateMappingListToBeDeleted", dtToBeDeleted)
                     );
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
+                    throw ex;
                 }
             }
         }
 
         public IEnumerable<PredicateMappingDto> GetPredicateMappings(IEnumerable<int> predicateIdList)
         {
-            var dt = predicateIdList.CreateDataTable();
+            var dt = predicateIdList.ToDataTable();
 
             using (var conn = GetNewConnection())
             {
@@ -119,9 +132,9 @@ namespace PredictHelper
                         },
                         new SqlParameter("@PredicateIdList", dt));
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-                    return null;
+                    throw ex;
                 }
             }
         }
@@ -149,9 +162,9 @@ namespace PredictHelper
                         },
                         new SqlParameter("@GroupId", predicatesGroupId));
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-                    return null;
+                    throw ex;
                 }
             }
         }

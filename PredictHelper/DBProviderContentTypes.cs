@@ -32,9 +32,9 @@ namespace PredictHelper
                         }
                     );
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-                    return null;
+                    throw ex;
                 }
             }
         }

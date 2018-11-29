@@ -39,18 +39,11 @@ namespace PredictHelper
                     return;
                 _ExistState = value;
                 OnPropertyChanged();
-
-                OnPropertyChanged(nameof(ExistStateText));
             }
         }
 
         public Dictionary<int, ContentType> ContentTypesDict;
         public string Name => ContentTypesDict[ContentTypeId].Name;
-        public string ExistStateText => ExistState == ExistState.Default ? " "
-                                      : ExistState == ExistState.New ? "New"
-                                      : ExistState == ExistState.Updated ? "Upd"
-                                      : ExistState == ExistState.ToBeDeleted ? "Del"
-                                      : throw new System.Exception("Invalid ExisState value");
 
         public MappingItemViewModel()
         {
@@ -60,7 +53,7 @@ namespace PredictHelper
 
         private void MappingItemViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(ExistState) || e.PropertyName == nameof(ExistStateText))
+            if (e.PropertyName == nameof(ExistState))
                 return;
 
             switch (ExistState)
