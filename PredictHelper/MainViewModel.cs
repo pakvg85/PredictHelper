@@ -200,7 +200,7 @@ namespace PredictHelper
             }
         }
 
-        private void DbLoadPredicates()
+        private void DbLoadPredicatesAndMappings()
         {
             ProcessMessage("Считывание предикатов из БД...");
 
@@ -260,59 +260,79 @@ namespace PredictHelper
             }
         }
 
+        private void DBSavePredicates()
+        {
+            var connectionString = File.ReadAllText(@"connectionStringPredicates.config");
+            var dbProvider = new DBProviderPredicates(connectionString);
+            var predicatesDtoWithExistState = Predicates
+                .Where(x => x.ExistState != ExistState.Default)
+                .Select(x => new PredicateDtoWithExistState
+                {
+                    ExistState = x.ExistState,
+                    GroupId = int.Parse(PredicateGroupId),
+                    PredicateId = x.Id, // !!!!!!!!!!!! не заполнен для новх записей (ExistState == New) !!!!!!!!!!!!!!
+                    Text = x.Text
+                });
+            IEnumerable<int> newlyCreatedIds = null;
+            dbProvider.SavePredicates(predicatesDtoWithExistState, out newlyCreatedIds);
+            int iter = -1;
+            foreach (var predicate in Predicates)
+            {
+                if (predicate.ExistState != ExistState.New)
+                    continue;
+
+                iter++;
+                predicate.Id = newlyCreatedIds.ElementAt(iter);
+            }
+        }
+
+        private void DBSaveMappings()
+        {
+            var connectionString = File.ReadAllText(@"connectionStringPredicates.config");
+            var dbProvider = new DBProviderPredicates(connectionString);
+            var predicateMappingsDtoWithExistState = new List<PredicateMappingDtoWithExistState>();
+            foreach (var predicate in Predicates)
+            {
+                predicateMappingsDtoWithExistState.AddRange(predicate.MappingItems
+                    .Where(x => x.ExistState != ExistState.Default)
+                    .Select(x => new PredicateMappingDtoWithExistState
+                    {
+                        ExistState = x.ExistState,
+                        ContentTypeId = x.ContentTypeId,
+                        IsActive = x.IsActive,
+                        PredicateId = predicate.Id // !!!!!!!!!!!! не заполнен для новх записей (ExistState == New) !!!!!!!!!!!!!!
+                    })
+                );
+            }
+            dbProvider.SavePredicateMappings(predicateMappingsDtoWithExistState);
+        }
+
+        //private void DBSaveContentTypes()
+        //{
+        //    var connectionString = File.ReadAllText(@"connectionStringContentTypes.config");
+        //    var dbProvider = new DBProviderContentTypes(connectionString);
+        //    var contentTypesDto = ContentTypesDict
+        //        .Select(x => new ContentTypeDto
+        //        {
+        //            Id = x.Key,
+        //            Name = x.Value.Name
+        //        });
+        //    dbProvider.SaveContentTypes(contentTypesDto);
+        //}
+
         private void SaveToDB()
         {
             ProcessMessage("Сохранение данных в БД...");
 
             try
             {
-                var CancToken = new CancellationToken();
-                //Task.Run(() =>
-                //{
-                var connectionString = File.ReadAllText(@"connectionStringPredicates.config");
-                var dbProvider = new DBProviderPredicates(connectionString);
-                var predicatesDtoWithExistState = Predicates
-                    .Where(x => x.ExistState != ExistState.Default)
-                    .Select(x => new PredicateDtoWithExistState
-                    {
-                        ExistState = x.ExistState,
-                        GroupId = int.Parse(PredicateGroupId),
-                        PredicateId = x.Id, // !!!!!!!!!!!! не заполнен для новх записей (ExistState == New) !!!!!!!!!!!!!!
-                        Text = x.Text
-                    });
-                IEnumerable<int> newlyCreatedIds = null;
-                dbProvider.SavePredicates(predicatesDtoWithExistState, out newlyCreatedIds);
-                int iter = -1;
-                foreach (var predicate in Predicates)
-                {
-                    if (predicate.ExistState != ExistState.New)
-                        continue;
-
-                    iter++;
-                    predicate.Id = newlyCreatedIds.ElementAt(iter);
-                }
-
-                var predicateMappingsDtoWithExistState = new List<PredicateMappingDtoWithExistState>();
-                foreach (var predicate in Predicates)
-                {
-                    predicateMappingsDtoWithExistState.AddRange(predicate.MappingItems
-                        .Where(x => x.ExistState != ExistState.Default)
-                        .Select(x => new PredicateMappingDtoWithExistState
-                        {
-                            ExistState = x.ExistState,
-                            ContentTypeId = x.ContentTypeId,
-                            IsActive = x.IsActive,
-                            PredicateId = predicate.Id // !!!!!!!!!!!! не заполнен для новх записей (ExistState == New) !!!!!!!!!!!!!!
-                        })
-                    );
-                }
-                dbProvider.SavePredicateMappings(predicateMappingsDtoWithExistState);
+                DBSavePredicates();
+                DBSaveMappings();
+                //DBSaveContentTypes();
 
                 ProcessMessage("Сохранение данных в БД завершено");
 
-                DbLoadPredicates();
-                //},
-                //CancToken);
+                DbLoadPredicatesAndMappings();
             }
             catch (Exception ex)
             {

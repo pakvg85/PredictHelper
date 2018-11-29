@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 
 namespace PredictHelper
 {
@@ -38,5 +39,32 @@ namespace PredictHelper
                 }
             }
         }
+
+        //public void SaveContentTypes(IEnumerable<ContentTypeDto> list)
+        //{
+        //    var dt = list.ToDataTable();
+
+        //    using (var conn = GetNewConnection())
+        //    {
+        //        try
+        //        {
+        //            conn.Open();
+
+        //            var result = ExecSpList(
+        //                conn,
+        //                "[dbo].[SaveContentTypes]",
+        //                0,
+        //                nameof(SaveContentTypes),
+        //                (x) => { return true; },
+        //                new SqlParameter("@ContentTypeListNew", dt)
+        //            );
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            throw ex;
+        //        }
+        //    }
+        //}
+
     }
 }
