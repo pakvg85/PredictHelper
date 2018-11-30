@@ -46,18 +46,25 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <StatusBar DockPanel.Dock="Bottom"
-                   Grid.Row="3"
-                   Grid.ColumnSpan="3">
-            <TextBlock Text="{Binding StatusBarText}"/>
-        </StatusBar>
-
         <StackPanel Grid.ColumnSpan="3"
                     Grid.Column="0"
                     Grid.Row="0">
+            <StatusBar DockPanel.Dock="Top"
+                   Grid.Row="3"
+                   Grid.ColumnSpan="3"
+                   Margin="5,5">
+                <TextBlock Text="{Binding StatusBarText}"/>
+            </StatusBar>
+
             <DockPanel LastChildFill="False"
-                       Margin="5,2">
-                <Button Content="Сбросить изменения"
+                       Margin="0,5">
+                <TextBlock Text="Текущая группа предикатов:"
+                           Margin="5,0"/>
+                <ComboBox ItemsSource="{Binding PredicateGroups, Mode=TwoWay}"
+                          SelectedValue="{Binding CurrentPredicateGroup, Mode=TwoWay}"
+                          Padding="10,0"
+                          Margin="5,0"/>
+                <Button Content="Считать данные из БД"
                         Padding="10,0"
                         Margin="5,0"
                         Command="{Binding Command5}"/>
@@ -74,39 +81,20 @@
                         Margin="5,0"
                         Command="{Binding Command2}"/>
             </DockPanel>
-            <DockPanel LastChildFill="False"
-                       Margin="5,2">
-                <TextBlock Text="Id группы предикатов:"
-                           Padding="10,0"
-                           Margin="5,0"/>
-                <TextBox Text="{Binding PredicateGroupId}"
-                         Padding="10,0"
-                         Margin="5,0"
-                         IsEnabled="False"
-                         IsReadOnly="True"/>
-                <TextBlock Text="Название группы предикатов:"
-                           Padding="10,0"
-                           Margin="5,0"/>
-                <TextBox Text="Активность в процессе"
-                         Padding="10,0"
-                         Margin="5,0"
-                         IsEnabled="False"
-                         IsReadOnly="True"/>
-            </DockPanel>
         </StackPanel>
 
         <DockPanel Grid.Column="0"
                    Grid.Row="1"
-                   Margin="5,2,0,2"
+                   Margin="5,5,0,5"
                    HorizontalAlignment="Stretch"
                    VerticalAlignment="Stretch">
 
             <DataGrid x:Name="predicatesDataGrid"
-                      ItemsSource="{Binding Path=Predicates, Mode=TwoWay}"
-                      SelectedIndex="{Binding Path=SelectedIndex}"
+                      ItemsSource="{Binding Path=CurrentPredicates, Mode=TwoWay}"
+                      SelectedValue="{Binding Path=CurrentPredicate, Mode=TwoWay}"
                       CanUserDeleteRows="False"
-                      CanUserSortColumns="False"
-                      CanUserReorderColumns="False"
+                      CanUserSortColumns="True"
+                      CanUserReorderColumns="True"
                       CanUserAddRows="False"
                       AutoGenerateColumns="False">
                 <DataGrid.InputBindings>
@@ -150,8 +138,8 @@
 
         <DockPanel Grid.Column="2"
                    Grid.Row="1"
-                   Margin="0,2,5,2">
-            <DataGrid ItemsSource="{Binding Path=FoundResults, Mode=TwoWay}"
+                   Margin="0,5,5,5">
+            <DataGrid ItemsSource="{Binding Path=CurrentPredicateMappings, Mode=TwoWay}"
                       CanUserAddRows="False"
                       CanUserDeleteRows="False"
                       AutoGenerateColumns="False">

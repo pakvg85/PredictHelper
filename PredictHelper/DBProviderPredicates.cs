@@ -168,5 +168,35 @@ namespace PredictHelper
                 }
             }
         }
+
+        public IEnumerable<PredicateGroupDto> GetPredicateGroups()
+        {
+            using (var conn = GetNewConnection())
+            {
+                try
+                {
+                    conn.Open();
+
+                    return ExecSpList(
+                        conn,
+                        "[dbo].[GetPredicateGroups]",
+                        0,
+                        nameof(GetPredicateGroups),
+                        (x) =>
+                        {
+                            var ci = new PredicateGroupDto();
+                            ci.GroupId = x.GetInt32(0);
+                            ci.Text = x.GetString(1);
+                            return ci;
+                        }
+                    );
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+            }
+        }
+
     }
 }

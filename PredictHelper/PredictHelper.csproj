@@ -87,6 +87,8 @@
     </Compile>
     <Compile Include="ObservableCollectionExt.cs" />
     <Compile Include="PredicateDto.cs" />
+    <Compile Include="PredicateGroupDto.cs" />
+    <Compile Include="PredicateGroupViewModel.cs" />
     <Compile Include="PredicateItemViewModel.cs" />
     <Compile Include="PredicateMappingDto.cs" />
     <Compile Include="RelayCommand.cs" />

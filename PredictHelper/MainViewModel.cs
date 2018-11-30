@@ -17,80 +17,60 @@ namespace PredictHelper
         const string PredicatesMassiveEditTextEdit = "Редактировать все предикты";
         const string PredicatesMassiveEditTextApply = "Применить";
 
-        private ObservableCollectionExt<PredicateItemViewModel> _Predicates;
-        private ObservableCollectionExt<MappingItemViewModel> _FoundResults;
-        private string _PredicatesMassiveEditButtonText;
-        private string _FoundResultsHeader;
-        private int _SelectedIndex;
+        private ObservableCollectionExt<PredicateGroupViewModel> _PredicateGroups;
+        private ObservableCollectionExt<PredicateItemViewModel> _CurrentPredicates;
+        private ObservableCollectionExt<MappingItemViewModel> _CurrentPredicateMappings;
+        private PredicateItemViewModel _CurrentPredicate;
 
         public Logger GlobalLogger = LogManager.GetCurrentClassLogger();
 
-        public ObservableCollectionExt<PredicateItemViewModel> Predicates
+        public ObservableCollectionExt<PredicateGroupViewModel> PredicateGroups
         {
-            get { return _Predicates; }
+            get { return _PredicateGroups; }
             set
             {
-                if (_Predicates == value)
+                if (_PredicateGroups == value)
                     return;
-                _Predicates = value;
+                _PredicateGroups = value;
                 OnPropertyChanged();
             }
         }
-        public ObservableCollectionExt<MappingItemViewModel> FoundResults
+        public ObservableCollectionExt<PredicateItemViewModel> CurrentPredicates
         {
-            get { return _FoundResults; }
+            get { return _CurrentPredicates; }
             set
             {
-                if (_FoundResults == value)
+                if (_CurrentPredicates == value)
                     return;
-                _FoundResults = value;
+                _CurrentPredicates = value;
                 OnPropertyChanged();
             }
         }
-        public string PredicatesMassiveEditButtonText
+        public ObservableCollectionExt<MappingItemViewModel> CurrentPredicateMappings
         {
-            get { return _PredicatesMassiveEditButtonText; }
+            get { return _CurrentPredicateMappings; }
             set
             {
-                if (_PredicatesMassiveEditButtonText == value)
+                if (_CurrentPredicateMappings == value)
                     return;
-                _PredicatesMassiveEditButtonText = value;
+                _CurrentPredicateMappings = value;
                 OnPropertyChanged();
             }
         }
-        public string FoundResultsHeader
-        {
-            get { return _FoundResultsHeader; }
-            set
-            {
-                if (_FoundResultsHeader == value)
-                    return;
-                _FoundResultsHeader = value;
-                OnPropertyChanged();
-            }
-        }
-        public int SelectedIndex
+        public PredicateItemViewModel CurrentPredicate
         {
             get
             {
-                return _SelectedIndex;
+                return _CurrentPredicate;
             }
             set
             {
-                if (_SelectedIndex == value)
+                if (_CurrentPredicate == value)
                     return;
-                _SelectedIndex = value;
+                _CurrentPredicate = value;
                 OnPropertyChanged();
 
-                if (value < 0 || value > Predicates.Count - 1)
-                {
-                    FoundResults = null;
-                }
-                else
-                {
-                    var currentPredicate = Predicates.ElementAt(value);
-                    FoundResults = currentPredicate.MappingItems;
-                }
+                CurrentPredicateMappings = _CurrentPredicate?.MappingItems;
             }
         }
 
@@ -107,15 +87,15 @@ namespace PredictHelper
             }
         }
 
-        private string _PredicateGroupId;
-        public string PredicateGroupId
+        private PredicateGroupViewModel _CurrentPredicateGroup;
+        public PredicateGroupViewModel CurrentPredicateGroup
         {
-            get { return _PredicateGroupId; }
+            get { return _CurrentPredicateGroup; }
             set
             {
-                if (_PredicateGroupId == value)
+                if (_CurrentPredicateGroup == value)
                     return;
-                _PredicateGroupId = value;
+                _CurrentPredicateGroup = value;
                 OnPropertyChanged();
             }
         }
@@ -129,19 +109,17 @@ namespace PredictHelper
         private ICommand _command4;
         public ICommand Command4 => _command4 ?? (_command4 = new RelayCommand(o => ShowDialogAddPredicates()));
         private ICommand _command5;
-        public ICommand Command5 => _command5 ?? (_command5 = new RelayCommand(o => DbLoadPredicatesAndMappings()));
+        public ICommand Command5 => _command5 ?? (_command5 = new RelayCommand(o => DbLoadPredicatesAndMappings(CurrentPredicateGroup.Id)));
 
         public Dictionary<int, ContentType> ContentTypesDict;
 
         public MainViewModel()
         {
-            Predicates = new ObservableCollectionExt<PredicateItemViewModel>();
-
-            PredicateGroupId = "101";
+            PredicateGroups = new ObservableCollectionExt<PredicateGroupViewModel>();
+            CurrentPredicates = new ObservableCollectionExt<PredicateItemViewModel>();
 
             try
             {
-                //LoadTestData();
                 LoadFromDb();
             }
             catch (Exception ex)
@@ -152,14 +130,11 @@ namespace PredictHelper
 
         private void ProcessAllPredicates()
         {
-            if (SelectedIndex < 0)
-                return;
-
             ProcessMessage("Поиск соответствий для предикатов...");
 
             try
             {
-                foreach (var predicate in Predicates)
+                foreach (var predicate in CurrentPredicates)
                 {
                     //var CancToken = new CancellationToken();
                     //Task.Run(() =>
@@ -201,7 +176,30 @@ namespace PredictHelper
             }
         }
 
-        private void DbLoadPredicatesAndMappings()
+        private void DBLoadPredicateGroups()
+        {
+            ProcessMessage("Считывание групп предикатов из БД...");
+
+            try
+            {
+                var connectionStringPredicates = File.ReadAllText(@"connectionStringPredicates.config");
+                var dbProvider = new DBProviderPredicates(connectionStringPredicates);
+                var predicateGroupsDto = dbProvider.GetPredicateGroups();
+
+                PredicateGroups.Clear();
+                PredicateGroups.AddRange(predicateGroupsDto.Select(x => new PredicateGroupViewModel
+                {
+                    Text = x.Text,
+                    Id = x.GroupId
+                }).ToList());
+            }
+            catch (Exception ex)
+            {
+                ProcessException(ex);
+            }
+        }
+
+        private void DbLoadPredicatesAndMappings(int predicateGroupId)
         {
             ProcessMessage("Считывание предикатов из БД...");
 
@@ -209,16 +207,16 @@ namespace PredictHelper
             {
                 var connectionStringPredicates = File.ReadAllText(@"connectionStringPredicates.config");
                 var dbProvider = new DBProviderPredicates(connectionStringPredicates);
-                var predicatesDto = dbProvider.GetPredicates(int.Parse(PredicateGroupId));
+                var predicatesDto = dbProvider.GetPredicates(predicateGroupId);
                 var predicatesMappingDto = dbProvider.GetPredicateMappings(predicatesDto.Select(x => x.PredicateId));
 
-                Predicates.Clear();
-                Predicates.AddRange(predicatesDto.Select(x => new PredicateItemViewModel
+                CurrentPredicates.Clear();
+                CurrentPredicates.AddRange(predicatesDto.Select(x => new PredicateItemViewModel
                 {
                     Text = x.Text,
                     Id = x.PredicateId
                 }).ToList());
-                foreach (var predicate in Predicates)
+                foreach (var predicate in CurrentPredicates)
                 {
                     var mappingList = predicatesMappingDto
                         .Where(x => x.PredicateId == predicate.Id)
@@ -233,7 +231,7 @@ namespace PredictHelper
                 }
 
                 // Выставление статуса Default делается из-за того что ранее был вызов MappingItems.AddRange()
-                foreach (var predicate in Predicates)
+                foreach (var predicate in CurrentPredicates)
                 {
                     predicate.ExistState = ExistState.Default;
                 }
@@ -252,7 +250,9 @@ namespace PredictHelper
             try
             {
                 DbLoadContentTypes();
-                DbLoadPredicatesAndMappings();
+                DBLoadPredicateGroups();
+                CurrentPredicateGroup = PredicateGroups.First();
+                DbLoadPredicatesAndMappings(CurrentPredicateGroup.Id);
                 ProcessMessage("Считывание данных из БД завершено");
             }
             catch (Exception ex)
@@ -265,19 +265,19 @@ namespace PredictHelper
         {
             var connectionString = File.ReadAllText(@"connectionStringPredicates.config");
             var dbProvider = new DBProviderPredicates(connectionString);
-            var predicatesDtoWithExistState = Predicates
+            var predicatesDtoWithExistState = CurrentPredicates
                 .Where(x => x.ExistState != ExistState.Default)
                 .Select(x => new PredicateDtoWithExistState
                 {
                     ExistState = x.ExistState,
-                    GroupId = int.Parse(PredicateGroupId),
+                    GroupId = CurrentPredicateGroup.Id,
                     PredicateId = x.Id, // !!!!!!!!!!!! не заполнен для новх записей (ExistState == New) !!!!!!!!!!!!!!
                     Text = x.Text
                 });
             IEnumerable<int> newlyCreatedIds = null;
             dbProvider.SavePredicates(predicatesDtoWithExistState, out newlyCreatedIds);
             int iter = -1;
-            foreach (var predicate in Predicates)
+            foreach (var predicate in CurrentPredicates)
             {
                 if (predicate.ExistState != ExistState.New)
                     continue;
@@ -292,7 +292,7 @@ namespace PredictHelper
             var connectionString = File.ReadAllText(@"connectionStringPredicates.config");
             var dbProvider = new DBProviderPredicates(connectionString);
             var predicateMappingsDtoWithExistState = new List<PredicateMappingDtoWithExistState>();
-            foreach (var predicate in Predicates)
+            foreach (var predicate in CurrentPredicates)
             {
                 predicateMappingsDtoWithExistState.AddRange(predicate.MappingItems
                     .Where(x => x.ExistState != ExistState.Default)
@@ -333,7 +333,7 @@ namespace PredictHelper
 
                 ProcessMessage("Сохранение данных в БД завершено");
 
-                DbLoadPredicatesAndMappings();
+                DbLoadPredicatesAndMappings(CurrentPredicateGroup.Id);
             }
             catch (Exception ex)
             {
@@ -368,7 +368,7 @@ namespace PredictHelper
                     predicate.MappingItems.RemoveRange(mappingsToBeTerminated);
                 }
 
-                Predicates.RemoveRange(predicatesToBeTerminated);
+                CurrentPredicates.RemoveRange(predicatesToBeTerminated);
             }
             catch (Exception ex)
             {
@@ -396,7 +396,7 @@ namespace PredictHelper
             {
                 var newPredicateTexts = Regex.Split(dialog.ResponseText, Environment.NewLine);
 
-                Predicates.AddRange(newPredicateTexts
+                CurrentPredicates.AddRange(newPredicateTexts
                     .Where(x => !string.IsNullOrEmpty(x))
                     .Select(x => new PredicateItemViewModel { Text = x }));
             }
@@ -409,14 +409,14 @@ namespace PredictHelper
             try
             {
                 var lines = File.ReadLines(@"PredicatesInitial.txt");
-                //Predicates.Clear();
-                Predicates.AddRange(lines.Select((x, i) => new PredicateItemViewModel
+                //CurrentPredicates.Clear();
+                CurrentPredicates.AddRange(lines.Select((x, i) => new PredicateItemViewModel
                 {
                     Text = x
                     //ExistState = ExistState.New
                 }).ToList());
 
-                //foreach (var predicate in Predicates)
+                //foreach (var predicate in CurrentPredicates)
                 //{
                 //    predicate.ExistState = ExistState.Default;
                 //}
