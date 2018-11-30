@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -126,9 +127,9 @@ namespace PredictHelper
         private ICommand _command3;
         public ICommand Command3 => _command3 ?? (_command3 = new RelayCommand(o => OnDeleteButtonPressed(o)));
         private ICommand _command4;
-        public ICommand Command4 => _command4 ?? (_command4 = new RelayCommand(o => LoadTestData()));
+        public ICommand Command4 => _command4 ?? (_command4 = new RelayCommand(o => ShowDialogAddPredicates()));
         private ICommand _command5;
-        public ICommand Command5 => _command5 ?? (_command5 = new RelayCommand(o => DbLoadPredicates()));
+        public ICommand Command5 => _command5 ?? (_command5 = new RelayCommand(o => DbLoadPredicatesAndMappings()));
 
         public Dictionary<int, ContentType> ContentTypesDict;
 
@@ -251,7 +252,7 @@ namespace PredictHelper
             try
             {
                 DbLoadContentTypes();
-                DbLoadPredicates();
+                DbLoadPredicatesAndMappings();
                 ProcessMessage("Считывание данных из БД завершено");
             }
             catch (Exception ex)
@@ -385,6 +386,19 @@ namespace PredictHelper
             catch (Exception ex)
             {
                 ProcessException(ex);
+            }
+        }
+
+        private void ShowDialogAddPredicates()
+        {
+            var dialog = new MessageBoxDialog.MessageBoxDialogWindow();
+            if (dialog.ShowDialog() == true)
+            {
+                var newPredicateTexts = Regex.Split(dialog.ResponseText, Environment.NewLine);
+
+                Predicates.AddRange(newPredicateTexts
+                    .Where(x => !string.IsNullOrEmpty(x))
+                    .Select(x => new PredicateItemViewModel { Text = x }));
             }
         }
 

@@ -82,6 +82,9 @@
     <Compile Include="ExistStateToTextConverter.cs" />
     <Compile Include="MappingItemViewModel.cs" />
     <Compile Include="MappingKey.cs" />
+    <Compile Include="MessageBoxDialog\MessageBoxDialogWindow.xaml.cs">
+      <DependentUpon>MessageBoxDialogWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ObservableCollectionExt.cs" />
     <Compile Include="PredicateDto.cs" />
     <Compile Include="PredicateItemViewModel.cs" />
@@ -104,6 +107,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="MessageBoxDialog\MessageBoxDialogWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">

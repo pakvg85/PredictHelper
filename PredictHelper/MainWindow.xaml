@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PredictHelper"
         mc:Ignorable="d"
-        Title="MainWindow" Height="800" Width="1200">
+        Title="MainWindow" Height="800" Width="1500">
 
     <Window.Resources>
         <local:MainViewModel x:Key="MainViewModel"/>
@@ -13,6 +13,24 @@
         <local:BooleanValueInverter x:Key="Inverter" />
         <local:BoolToForegroundConverter x:Key="BoolToForegroundConverter"/>
         <local:ExistStateToTextConverter x:Key="ExistStateToTextConverter"/>
+        <Style x:Key="DataGridReadonlyCellStyle" TargetType="{x:Type DataGridCell}" >
+            <Setter Property="Background" Value="LightGray" />
+            <Style.Triggers>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="DarkGray"/>
+                    <Setter Property="Foreground" Value="Black"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="DataGridEditableCellStyle" TargetType="{x:Type DataGridCell}" >
+            <Setter Property="Background" Value="White" />
+            <Style.Triggers>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="DarkGray"/>
+                    <Setter Property="Foreground" Value="Black"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
     </Window.Resources>
 
     <Grid DataContext="{StaticResource MainViewModel}"
@@ -43,11 +61,11 @@
                         Padding="10,0"
                         Margin="5,0"
                         Command="{Binding Command5}"/>
-                <Button Content="Подгрузить тестовые данные из файла"
+                <Button Content="Добавить новые предикаты"
                         Padding="10,0"
                         Margin="5,0"
                         Command="{Binding Command4}"/>
-                <Button Content="Запустить анализ"
+                <Button Content="Искать соответствия в судебных документах"
                         Padding="10,0"
                         Margin="5,0"
                         Command="{Binding Command1}"/>
@@ -58,13 +76,18 @@
             </DockPanel>
             <DockPanel LastChildFill="False"
                        Margin="5,2">
-                <!--<TextBlock Text="Группа предикатов:"/>
-                <TextBox Text="Активность в процессе"
-                     IsReadOnly="True"/>-->
                 <TextBlock Text="Id группы предикатов:"
                            Padding="10,0"
                            Margin="5,0"/>
                 <TextBox Text="{Binding PredicateGroupId}"
+                         Padding="10,0"
+                         Margin="5,0"
+                         IsEnabled="False"
+                         IsReadOnly="True"/>
+                <TextBlock Text="Название группы предикатов:"
+                           Padding="10,0"
+                           Margin="5,0"/>
+                <TextBox Text="Активность в процессе"
                          Padding="10,0"
                          Margin="5,0"
                          IsEnabled="False"
@@ -78,15 +101,13 @@
                    HorizontalAlignment="Stretch"
                    VerticalAlignment="Stretch">
 
-            <!--Visibility="{Binding Path=IsPredicatesEditing,
-                                           Converter={StaticResource Inverter},
-                                           ConverterParameter={StaticResource BoolToVis}}"-->
             <DataGrid x:Name="predicatesDataGrid"
                       ItemsSource="{Binding Path=Predicates, Mode=TwoWay}"
                       SelectedIndex="{Binding Path=SelectedIndex}"
                       CanUserDeleteRows="False"
                       CanUserSortColumns="False"
                       CanUserReorderColumns="False"
+                      CanUserAddRows="False"
                       AutoGenerateColumns="False">
                 <DataGrid.InputBindings>
                     <KeyBinding Key="Delete" 
@@ -99,29 +120,24 @@
                 </DataGrid.Resources>
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Состояние" 
+                                        CellStyle="{StaticResource DataGridReadonlyCellStyle}"
                                         IsReadOnly="True"
                                         Binding="{Binding Path=ExistState,
                                                           Converter={StaticResource ExistStateToTextConverter}}"/>
-                    <DataGridTextColumn Header="Id предиката" 
-                                        IsReadOnly="True"
-                                        Binding="{Binding Path=Id}"/>
                     <DataGridTextColumn Header="Текст предиката" 
-                                        Width="300"
+                                        CellStyle="{StaticResource DataGridEditableCellStyle}"
+                                        Width="400"
                                         Binding="{Binding Path=Text}"/>
                     <DataGridTextColumn Header="Совпадений" 
+                                        CellStyle="{StaticResource DataGridReadonlyCellStyle}"
                                         IsReadOnly="True"
                                         Binding="{Binding Path=MappingItemsCount}"/>
+                    <DataGridTextColumn Header="Id предиката" 
+                                        CellStyle="{StaticResource DataGridReadonlyCellStyle}"
+                                        IsReadOnly="True"
+                                        Binding="{Binding Path=Id}"/>
                 </DataGrid.Columns>
             </DataGrid>
-            <!--<ScrollViewer>
-                <TextBox Text="{Binding PredicatesText}"
-                         Visibility="{Binding Path=IsPredicatesEditing,
-                                              Converter={StaticResource BoolToVis}}"
-                  HorizontalAlignment="Stretch"
-                  VerticalAlignment="Stretch"
-                  TextWrapping="NoWrap"
-                  AcceptsReturn="True"/>
-            </ScrollViewer>-->
         </DockPanel>
 
         <GridSplitter Grid.Column="1" 
@@ -132,12 +148,6 @@
                       HorizontalAlignment="Center" 
                       VerticalAlignment="Stretch" />
 
-        <!--<TextBlock Text="{Binding Path=FoundResultsHeader}"
-                   Padding="5,2"
-                   Grid.Column="2"
-                   Grid.Row="0"
-                   DockPanel.Dock="Top"/>-->
-
         <DockPanel Grid.Column="2"
                    Grid.Row="1"
                    Margin="0,2,5,2">
@@ -147,10 +157,12 @@
                       AutoGenerateColumns="False">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Состояние" 
+                                        CellStyle="{StaticResource DataGridReadonlyCellStyle}"
                                         IsReadOnly="True"
                                         Binding="{Binding Path=ExistState,
                                                           Converter={StaticResource ExistStateToTextConverter}}"/>
-                    <DataGridTemplateColumn Header="Активен">
+                    <DataGridTemplateColumn Header="Активен"
+                                            CellStyle="{StaticResource DataGridEditableCellStyle}">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <CheckBox HorizontalAlignment="Stretch" 
@@ -161,13 +173,14 @@
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
-
-                    <DataGridTextColumn Header="Id документа" 
-                                        IsReadOnly="True"
-                                        Binding="{Binding Path=ContentTypeId}"/>
-                    <DataGridTextColumn Header="Заголовок документа" 
+                    <DataGridTextColumn Header="Заголовок судебного документа" 
+                                        CellStyle="{StaticResource DataGridReadonlyCellStyle}"
                                         IsReadOnly="True"
                                         Binding="{Binding Path=Name}"/>
+                    <DataGridTextColumn Header="Id документа" 
+                                        CellStyle="{StaticResource DataGridReadonlyCellStyle}"
+                                        IsReadOnly="True"
+                                        Binding="{Binding Path=ContentTypeId}"/>
                 </DataGrid.Columns>
             </DataGrid>
         </DockPanel>
