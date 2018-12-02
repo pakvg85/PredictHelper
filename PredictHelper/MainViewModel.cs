@@ -26,50 +26,25 @@ namespace PredictHelper
 
         public ObservableCollectionExt<PredicateGroupViewModel> PredicateGroups
         {
-            get { return _PredicateGroups; }
-            set
-            {
-                if (_PredicateGroups == value)
-                    return;
-                _PredicateGroups = value;
-                OnPropertyChanged();
-            }
+            get => _PredicateGroups;
+            set => SetField(ref _PredicateGroups, value);
         }
         public ObservableCollectionExt<PredicateItemViewModel> CurrentPredicates
         {
-            get { return _CurrentPredicates; }
-            set
-            {
-                if (_CurrentPredicates == value)
-                    return;
-                _CurrentPredicates = value;
-                OnPropertyChanged();
-            }
+            get => _CurrentPredicates;
+            set => SetField(ref _CurrentPredicates, value);
         }
         public ObservableCollectionExt<MappingItemViewModel> CurrentPredicateMappings
         {
-            get { return _CurrentPredicateMappings; }
-            set
-            {
-                if (_CurrentPredicateMappings == value)
-                    return;
-                _CurrentPredicateMappings = value;
-                OnPropertyChanged();
-            }
+            get => _CurrentPredicateMappings;
+            set => SetField(ref _CurrentPredicateMappings, value);
         }
         public PredicateItemViewModel CurrentPredicate
         {
-            get
-            {
-                return _CurrentPredicate;
-            }
+            get => _CurrentPredicate;
             set
             {
-                if (_CurrentPredicate == value)
-                    return;
-                _CurrentPredicate = value;
-                OnPropertyChanged();
-
+                SetField(ref _CurrentPredicate, value);
                 CurrentPredicateMappings = _CurrentPredicate?.MappingItems;
             }
         }
@@ -77,27 +52,15 @@ namespace PredictHelper
         private string _StatusBarText;
         public string StatusBarText
         {
-            get { return _StatusBarText; }
-            set
-            {
-                if (_StatusBarText == value)
-                    return;
-                _StatusBarText = value;
-                OnPropertyChanged();
-            }
+            get => _StatusBarText;
+            set => SetField(ref _StatusBarText, value);
         }
 
         private PredicateGroupViewModel _CurrentPredicateGroup;
         public PredicateGroupViewModel CurrentPredicateGroup
         {
-            get { return _CurrentPredicateGroup; }
-            set
-            {
-                if (_CurrentPredicateGroup == value)
-                    return;
-                _CurrentPredicateGroup = value;
-                OnPropertyChanged();
-            }
+            get => _CurrentPredicateGroup;
+            set => SetField(ref _CurrentPredicateGroup, value);
         }
 
         private ICommand _command1;

@@ -12,48 +12,23 @@ namespace PredictHelper
 
         public int Id
         {
-            get { return _Id; }
-            set
-            {
-                if (_Id == value)
-                    return;
-                _Id = value;
-                OnPropertyChanged();
-            }
+            get => _Id;
+            set => SetField(ref _Id, value);
         }
         public string Text
         {
-            get { return _Text; }
-            set
-            {
-                if (_Text == value)
-                    return;
-                _Text = value;
-                OnPropertyChanged();
-            }
+            get => _Text;
+            set => SetField(ref _Text, value);
         }
         public ObservableCollectionExt<MappingItemViewModel> MappingItems
         {
-            get { return _MappingItems; }
-            set
-            {
-                if (_MappingItems == value)
-                    return;
-                _MappingItems = value;
-                OnPropertyChanged();
-                OnPropertyChanged("MappingItemsCount");
-            }
+            get => _MappingItems;
+            set => SetField(ref _MappingItems, value); //OnPropertyChanged("MappingItemsCount");
         }
         public ExistState ExistState
         {
-            get { return _ExistState; }
-            set
-            {
-                if (_ExistState == value)
-                    return;
-                _ExistState = value;
-                OnPropertyChanged();
-            }
+            get => _ExistState;
+            set => SetField(ref _ExistState, value);
         }
 
         public int MappingItemsCount => MappingItems.Where(x => x.ExistState != ExistState.ToBeDeleted).Count();

@@ -17,7 +17,7 @@ namespace PredictHelper
 
         protected bool Set<T>(T value, [CallerMemberName]string property = null)
         {
-            if (_valueStore.ContainsKey(property) && Equals(_valueStore[property], value))
+            if (_valueStore.ContainsKey(property) && EqualityComparer<T>.Default.Equals((T)_valueStore[property], value))
                 return false;
 
             _valueStore[property] = value;

@@ -11,7 +11,6 @@
         <local:MainViewModel x:Key="MainViewModel"/>
         <BooleanToVisibilityConverter x:Key="BoolToVis" />
         <local:BooleanValueInverter x:Key="Inverter" />
-        <local:BoolToForegroundConverter x:Key="BoolToForegroundConverter"/>
         <local:ExistStateToTextConverter x:Key="ExistStateToTextConverter"/>
         <Style x:Key="DataGridReadonlyCellStyle" TargetType="{x:Type DataGridCell}" >
             <Setter Property="Background" Value="LightGray" />

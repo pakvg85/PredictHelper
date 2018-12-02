@@ -8,36 +8,18 @@
 
         public int Id
         {
-            get { return _Id; }
-            set
-            {
-                if (_Id == value)
-                    return;
-                _Id = value;
-                OnPropertyChanged();
-            }
+            get => _Id;
+            set => SetField(ref _Id, value);
         }
         public string Name
         {
-            get { return _Name; }
-            set
-            {
-                if (_Name == value)
-                    return;
-                _Name = value;
-                OnPropertyChanged();
-            }
+            get => _Name;
+            set => SetField(ref _Name, value);
         }
         public bool IsActive
         {
-            get { return _IsActive; }
-            set
-            {
-                if (_IsActive == value)
-                    return;
-                _IsActive = value;
-                OnPropertyChanged();
-            }
+            get => _IsActive;
+            set => SetField(ref _IsActive, value);
         }
     }
 }

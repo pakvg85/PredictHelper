@@ -10,28 +10,18 @@ namespace PredictHelper
     {
         private int _Id;
         private string _Text;
+
         public int Id
         {
-            get { return _Id; }
-            set
-            {
-                if (_Id == value)
-                    return;
-                _Id = value;
-                OnPropertyChanged();
-            }
+            get => _Id;
+            set => SetField(ref _Id, value);
         }
         public string Text
         {
-            get { return _Text; }
-            set
-            {
-                if (_Text == value)
-                    return;
-                _Text = value;
-                OnPropertyChanged();
-            }
+            get => _Text;
+            set => SetField(ref _Text, value);
         }
+
         override public string ToString() => Text + $" (Id {Id.ToString()})";
     }
 }

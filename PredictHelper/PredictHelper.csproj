@@ -70,7 +70,6 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="BooleanValueInverter.cs" />
-    <Compile Include="BoolToForegroundConverter.cs" />
     <Compile Include="CommonExtensions.DataTable.cs" />
     <Compile Include="CommonExtensions.Sql.cs" />
     <Compile Include="ContentTypeDto.cs" />

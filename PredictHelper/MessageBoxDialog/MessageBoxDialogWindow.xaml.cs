@@ -26,7 +26,7 @@ namespace PredictHelper.MessageBoxDialog
         }
         public string ResponseText
         {
-            get { return ResponseTextBox.Text; }
+            get => ResponseTextBox.Text;
             set { ResponseTextBox.Text = value; }
         }
 

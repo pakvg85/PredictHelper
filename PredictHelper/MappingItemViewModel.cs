@@ -10,36 +10,18 @@ namespace PredictHelper
 
         public int ContentTypeId
         {
-            get { return _ContentTypeId; }
-            set
-            {
-                if (_ContentTypeId == value)
-                    return;
-                _ContentTypeId = value;
-                OnPropertyChanged();
-            }
+            get => _ContentTypeId;
+            set => SetField(ref _ContentTypeId, value);
         }
         public bool IsActive
         {
-            get { return _IsActive; }
-            set
-            {
-                if (_IsActive == value)
-                    return;
-                _IsActive = value;
-                OnPropertyChanged();
-            }
+            get => _IsActive;
+            set => SetField(ref _IsActive, value);
         }
         public ExistState ExistState
         {
-            get { return _ExistState; }
-            set
-            {
-                if (_ExistState == value)
-                    return;
-                _ExistState = value;
-                OnPropertyChanged();
-            }
+            get => _ExistState;
+            set => SetField(ref _ExistState, value);
         }
 
         public Dictionary<int, ContentType> ContentTypesDict;
