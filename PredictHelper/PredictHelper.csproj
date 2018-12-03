@@ -69,29 +69,28 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Converters\BooleanValueInverter.cs" />
-    <Compile Include="Extensions\CommonExtensions.DataTable.cs" />
-    <Compile Include="Extensions\CommonExtensions.Sql.cs" />
-    <Compile Include="Dto\ContentTypeDto.cs" />
+    <Compile Include="Common\Converters\BooleanValueInverter.cs" />
+    <Compile Include="Common\Extensions\CommonExtensions.DataTable.cs" />
+    <Compile Include="Common\Extensions\CommonExtensions.Sql.cs" />
+    <Compile Include="Models\ContentTypeDto.cs" />
     <Compile Include="ViewModels\ContentTypeItemViewModel.cs" />
-    <Compile Include="SqlProviders\DBProviderContentTypes.cs" />
-    <Compile Include="SqlProviders\DBProviderPredicates.cs" />
-    <Compile Include="SqlProviders\DBProviderBase.cs" />
-    <Compile Include="CommonTypes\ExistState.cs" />
-    <Compile Include="Converters\ExistStateToTextConverter.cs" />
+    <Compile Include="Common\SqlProviders\DBProviderContentTypes.cs" />
+    <Compile Include="Common\SqlProviders\DBProviderPredicates.cs" />
+    <Compile Include="Common\SqlProviders\DBProviderBase.cs" />
+    <Compile Include="Common\ExistState.cs" />
+    <Compile Include="Common\Converters\ExistStateToTextConverter.cs" />
     <Compile Include="ViewModels\MappingItemViewModel.cs" />
-    <Compile Include="CommonTypes\MappingKey.cs" />
     <Compile Include="Views\MessageBoxDialogWindow.xaml.cs">
       <DependentUpon>MessageBoxDialogWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="CommonTypes\ObservableCollectionExt.cs" />
-    <Compile Include="Dto\PredicateDto.cs" />
-    <Compile Include="Dto\PredicateGroupDto.cs" />
+    <Compile Include="Common\ObservableCollectionExt.cs" />
+    <Compile Include="Models\PredicateDto.cs" />
+    <Compile Include="Models\PredicateGroupDto.cs" />
     <Compile Include="ViewModels\PredicateGroupViewModel.cs" />
     <Compile Include="ViewModels\PredicateItemViewModel.cs" />
-    <Compile Include="Dto\PredicateMappingDto.cs" />
-    <Compile Include="CommonTypes\RelayCommand.cs" />
-    <Compile Include="Extensions\CommonExtensions.UIElementFocusable.cs" />
+    <Compile Include="Models\PredicateMappingDto.cs" />
+    <Compile Include="Common\RelayCommand.cs" />
+    <Compile Include="Common\Extensions\CommonExtensions.UIElementFocusable.cs" />
     <Compile Include="ViewModels\ViewModelBase.cs" />
     <Compile Include="ViewModels\ViewModelBaseWithStore.cs" />
     <Page Include="Views\MainWindow.xaml">
@@ -102,7 +101,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="CommonTypes\ContentType.cs" />
+    <Compile Include="Models\ContentType.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="Views\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
