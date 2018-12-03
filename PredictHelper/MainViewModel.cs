@@ -5,18 +5,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Input;
 
 namespace PredictHelper
 {
     public class MainViewModel : ViewModelBase
     {
-        const string PredicatesMassiveEditTextEdit = "Редактировать все предикты";
-        const string PredicatesMassiveEditTextApply = "Применить";
-
         private ObservableCollectionExt<PredicateGroupViewModel> _PredicateGroups;
         private ObservableCollectionExt<PredicateItemViewModel> _CurrentPredicates;
         private ObservableCollectionExt<MappingItemViewModel> _CurrentPredicateMappings;
@@ -99,12 +93,7 @@ namespace PredictHelper
             {
                 foreach (var predicate in CurrentPredicates)
                 {
-                    //var CancToken = new CancellationToken();
-                    //Task.Run(() =>
-                    //{
                     predicate.Process(ContentTypesDict);
-                    //},
-                    //CancToken);
                 }
 
                 ProcessMessage("Поиск соответствий для предикатов завершен");
@@ -372,17 +361,10 @@ namespace PredictHelper
             try
             {
                 var lines = File.ReadLines(@"PredicatesInitial.txt");
-                //CurrentPredicates.Clear();
                 CurrentPredicates.AddRange(lines.Select((x, i) => new PredicateItemViewModel
                 {
                     Text = x
-                    //ExistState = ExistState.New
                 }).ToList());
-
-                //foreach (var predicate in CurrentPredicates)
-                //{
-                //    predicate.ExistState = ExistState.Default;
-                //}
 
                 ProcessMessage("Считывание новых предикатов из локального файла завершено");
             }

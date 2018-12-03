@@ -13,8 +13,7 @@ namespace PredictHelper
                 : source == ExistState.New ? "New"
                 : source == ExistState.Updated ? "Upd"
                 : source == ExistState.ToBeDeleted ? "Del"
-                //: "<INVALID>";
-                : throw new System.Exception($"Invalid ExistState value: {source}"); // DO.NOT.THROW.EXCEPTIONS. 
+                : "<INVALID>"; // : throw new System.Exception($"Invalid ExistState value: {source}"); // DO.NOT.THROW.EXCEPTIONS. 
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
