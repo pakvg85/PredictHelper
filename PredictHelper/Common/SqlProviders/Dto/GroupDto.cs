@@ -1,8 +1,11 @@
-﻿namespace PredictHelper
+﻿using System;
+
+namespace PredictHelper
 {
     public class GroupDto
     {
-        public int GroupId { get; set; }
+        public Guid Guid { get; set; }
+        public int Id { get; set; }
         public string Text { get; set; }
     }
 }

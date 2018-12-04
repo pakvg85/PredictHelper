@@ -72,12 +72,15 @@
     <Compile Include="Common\Converters\BooleanValueInverter.cs" />
     <Compile Include="Common\Extensions\CommonExtensions.DataTable.cs" />
     <Compile Include="Common\Extensions\CommonExtensions.Sql.cs" />
+    <Compile Include="Common\MessageImportance.cs" />
+    <Compile Include="Common\MessageOccuredEventArgs.cs" />
     <Compile Include="Common\SqlProviders\Dto\ContentTypeDto.cs" />
     <Compile Include="Common\SqlProviders\SqlProviderContentTypes.cs" />
     <Compile Include="Common\SqlProviders\SqlProviderPredicates.cs" />
     <Compile Include="Common\SqlProviders\SqlProviderBase.cs" />
     <Compile Include="Common\ExistState.cs" />
     <Compile Include="Common\Converters\ExistStateToTextConverter.cs" />
+    <Compile Include="Models\MainModel.cs" />
     <Compile Include="Models\MappingItem.cs" />
     <Compile Include="Views\MessageBoxDialogWindow.xaml.cs">
       <DependentUpon>MessageBoxDialogWindow.xaml</DependentUpon>

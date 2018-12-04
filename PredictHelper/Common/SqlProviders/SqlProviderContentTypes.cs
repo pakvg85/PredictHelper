@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
+using System.IO;
 
 namespace PredictHelper
 {
     public class SqlProviderContentTypes : SqlProviderBase
     {
-        public SqlProviderContentTypes(string connectionString)
+        public SqlProviderContentTypes(string connectionString = null)
             : base(connectionString)
         {
+            var connectionStringContentTypes = File.ReadAllText(@"connectionStringContentTypes.config");
+            _connectionString = connectionStringContentTypes;
         }
 
         public IEnumerable<ContentTypeDto> GetContentTypes()
@@ -39,32 +41,6 @@ namespace PredictHelper
                 }
             }
         }
-
-        //public void SaveContentTypes(IEnumerable<ContentTypeDto> list)
-        //{
-        //    var dt = list.ToDataTable();
-
-        //    using (var conn = GetNewConnection())
-        //    {
-        //        try
-        //        {
-        //            conn.Open();
-
-        //            var result = ExecSpList(
-        //                conn,
-        //                "[dbo].[SaveContentTypes]",
-        //                0,
-        //                nameof(SaveContentTypes),
-        //                (x) => { return true; },
-        //                new SqlParameter("@ContentTypeListNew", dt)
-        //            );
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            throw ex;
-        //        }
-        //    }
-        //}
 
     }
 }

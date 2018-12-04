@@ -20,7 +20,7 @@ namespace PredictHelper
         private void Current_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
         {
             MainViewModel viewModel = (MainViewModel)mainGrid.DataContext;
-            viewModel.ProcessException(e.Exception, true);
+            viewModel.ProcessException(e.Exception, Common.MessageImportance.Fatal);
             e.Handled = true;
         }
     }

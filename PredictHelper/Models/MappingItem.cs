@@ -1,35 +1,24 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace PredictHelper
 {
     public class MappingItem : BaseInpc
     {
-        private int _ContentTypeId;
         private bool _IsActive;
         private ExistState _ExistState;
 
-        public int ContentTypeId
-        {
-            get => _ContentTypeId;
-            set => SetField(ref _ContentTypeId, value);
-        }
-        public bool IsActive
-        {
-            get => _IsActive;
-            set => SetField(ref _IsActive, value);
-        }
-        public ExistState ExistState
-        {
-            get => _ExistState;
-            set => SetField(ref _ExistState, value);
-        }
+        public bool IsActive { get => _IsActive; set => SetField(ref _IsActive, value); }
+        public ExistState ExistState { get => _ExistState; set => SetField(ref _ExistState, value); }
+        public int ContentTypeId { get; set; }
+        public Guid PredicateGuid { get; set; }
 
         public Dictionary<int, ContentType> ContentTypesDict;
         public string Name => ContentTypesDict[ContentTypeId].Name;
 
         public MappingItem()
         {
-            ExistState = ExistState.Initializing;
+            ExistState = ExistState.New;
             this.PropertyChanged += MappingItem_PropertyChanged;
         }
 
@@ -44,7 +33,6 @@ namespace PredictHelper
                     break;
                 case ExistState.Default:
                     ExistState = ExistState.Updated;
-                    //ExistStateChanged?.Invoke(this, new System.EventArgs());
                     break;
                 case ExistState.New:
                     break;
@@ -52,7 +40,6 @@ namespace PredictHelper
                     break;
                 case ExistState.ToBeDeleted:
                     ExistState = ExistState.Updated;
-                    //ExistStateChanged?.Invoke(this, new System.EventArgs());
                     break;
                 default:
                     throw new System.Exception("Неожиданная ситуация: не указан ExistState");
