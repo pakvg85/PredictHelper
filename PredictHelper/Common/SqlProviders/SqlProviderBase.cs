@@ -50,11 +50,11 @@ namespace PredictHelper
         #endregion
     }
 
-    public class DBProviderBase
+    public class SqlProviderBase
     {
         protected string _connectionString;
 
-        public DBProviderBase(string connectionString)
+        public SqlProviderBase(string connectionString)
         {
             _connectionString = connectionString;
         }

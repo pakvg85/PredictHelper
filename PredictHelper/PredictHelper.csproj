@@ -72,27 +72,26 @@
     <Compile Include="Common\Converters\BooleanValueInverter.cs" />
     <Compile Include="Common\Extensions\CommonExtensions.DataTable.cs" />
     <Compile Include="Common\Extensions\CommonExtensions.Sql.cs" />
-    <Compile Include="Models\ContentTypeDto.cs" />
-    <Compile Include="ViewModels\ContentTypeItemViewModel.cs" />
-    <Compile Include="Common\SqlProviders\DBProviderContentTypes.cs" />
-    <Compile Include="Common\SqlProviders\DBProviderPredicates.cs" />
-    <Compile Include="Common\SqlProviders\DBProviderBase.cs" />
+    <Compile Include="Common\SqlProviders\Dto\ContentTypeDto.cs" />
+    <Compile Include="Common\SqlProviders\SqlProviderContentTypes.cs" />
+    <Compile Include="Common\SqlProviders\SqlProviderPredicates.cs" />
+    <Compile Include="Common\SqlProviders\SqlProviderBase.cs" />
     <Compile Include="Common\ExistState.cs" />
     <Compile Include="Common\Converters\ExistStateToTextConverter.cs" />
-    <Compile Include="ViewModels\MappingItemViewModel.cs" />
+    <Compile Include="Models\MappingItem.cs" />
     <Compile Include="Views\MessageBoxDialogWindow.xaml.cs">
       <DependentUpon>MessageBoxDialogWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Common\ObservableCollectionExt.cs" />
-    <Compile Include="Models\PredicateDto.cs" />
-    <Compile Include="Models\PredicateGroupDto.cs" />
-    <Compile Include="ViewModels\PredicateGroupViewModel.cs" />
-    <Compile Include="ViewModels\PredicateItemViewModel.cs" />
-    <Compile Include="Models\PredicateMappingDto.cs" />
+    <Compile Include="Common\SqlProviders\Dto\PredicateDto.cs" />
+    <Compile Include="Common\SqlProviders\Dto\GroupDto.cs" />
+    <Compile Include="Models\GroupItem.cs" />
+    <Compile Include="Models\PredicateItem.cs" />
+    <Compile Include="Common\SqlProviders\Dto\MappingDto.cs" />
     <Compile Include="Common\RelayCommand.cs" />
     <Compile Include="Common\Extensions\CommonExtensions.UIElementFocusable.cs" />
-    <Compile Include="ViewModels\ViewModelBase.cs" />
-    <Compile Include="ViewModels\ViewModelBaseWithStore.cs" />
+    <Compile Include="Common\BaseInpc.cs" />
+    <Compile Include="Common\BaseInpcWithStore.cs" />
     <Page Include="Views\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

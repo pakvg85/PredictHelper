@@ -820,7 +820,7 @@
           <xs:element name="name" minOccurs="0" maxOccurs="1" type="xs:string" />
           <xs:element name="useTransactions" minOccurs="0" maxOccurs="1" type="xs:boolean" />
           <xs:element name="dbUserName" minOccurs="0" maxOccurs="1" type="Layout" />
-          <xs:element name="dbProvider" minOccurs="0" maxOccurs="1" type="xs:string" />
+          <xs:element name="SqlProvider" minOccurs="0" maxOccurs="1" type="xs:string" />
           <xs:element name="dbPassword" minOccurs="0" maxOccurs="1" type="Layout" />
           <xs:element name="keepConnection" minOccurs="0" maxOccurs="1" type="xs:boolean" />
           <xs:element name="dbDatabase" minOccurs="0" maxOccurs="1" type="Layout" />
@@ -850,7 +850,7 @@
             <xs:documentation>Database user name. If the ConnectionString is not provided this value will be used to construct the "User ID=" part of the connection string.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="dbProvider" type="xs:string">
+        <xs:attribute name="SqlProvider" type="xs:string">
           <xs:annotation>
             <xs:documentation>Name of the database provider.</xs:documentation>
           </xs:annotation>

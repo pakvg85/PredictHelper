@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 
 namespace PredictHelper
 {
-    public class ViewModelBase : INotifyPropertyChanged
+    public class BaseInpc : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 

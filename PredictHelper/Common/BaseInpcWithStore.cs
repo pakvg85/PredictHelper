@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 
 namespace PredictHelper
 {
-    public abstract class ViewModelBaseWithStore : ViewModelBase
+    public abstract class BaseInpcWithStore : BaseInpc
     {
         private Dictionary<string, object> _valueStore = new Dictionary<string, object>();
 

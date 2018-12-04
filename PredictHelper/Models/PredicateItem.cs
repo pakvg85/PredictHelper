@@ -3,11 +3,11 @@ using System.Linq;
 
 namespace PredictHelper
 {
-    public class PredicateItemViewModel : ViewModelBase
+    public class PredicateItem : BaseInpc
     {
         private int _Id;
         private string _Text;
-        private ObservableCollectionExt<MappingItemViewModel> _MappingItems;
+        private ObservableCollectionExt<MappingItem> _MappingItems;
         private ExistState _ExistState;
 
         public int Id
@@ -20,7 +20,7 @@ namespace PredictHelper
             get => _Text;
             set => SetField(ref _Text, value);
         }
-        public ObservableCollectionExt<MappingItemViewModel> MappingItems
+        public ObservableCollectionExt<MappingItem> MappingItems
         {
             get => _MappingItems;
             set => SetField(ref _MappingItems, value); //OnPropertyChanged("MappingItemsCount");
@@ -33,13 +33,13 @@ namespace PredictHelper
 
         public int MappingItemsCount => MappingItems.Where(x => x.ExistState != ExistState.ToBeDeleted).Count();
 
-        public PredicateItemViewModel()
+        public PredicateItem()
         {
             ExistState = ExistState.New;
-            MappingItems = new ObservableCollectionExt<MappingItemViewModel>();
+            MappingItems = new ObservableCollectionExt<MappingItem>();
 
             MappingItems.CollectionChanged += MappingItems_CollectionChanged;
-            this.PropertyChanged += PredicateItemViewModel_PropertyChanged;
+            this.PropertyChanged += PredicateItem_PropertyChanged;
         }
 
         private void MappingItems_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -48,7 +48,7 @@ namespace PredictHelper
             OnPropertyChanged(nameof(MappingItemsCount));
         }
 
-        private void PredicateItemViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private void PredicateItem_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(ExistState))
                 return;
@@ -117,7 +117,7 @@ namespace PredictHelper
             var newMappings = processedMappings.Except(existentMappings)
                 .ToList();
             var newMappingItemsVM = newMappings
-                .Select(x => new MappingItemViewModel
+                .Select(x => new MappingItem
                 {
                     ContentTypeId = x,
                     IsActive = true,
@@ -137,8 +137,8 @@ namespace PredictHelper
         // TODO: при изменении статуса маппинга должно изменяться количество у предиката
         //private void MappingItem_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         //{
-        //    if (e.PropertyName == nameof(MappingItemViewModel.ExistState))
-        //    //&& (sender as MappingItemViewModel).ExistState == ExistState.ToBeDeleted)
+        //    if (e.PropertyName == nameof(MappingItem.ExistState))
+        //    //&& (sender as MappingItem).ExistState == ExistState.ToBeDeleted)
         //    {
         //        OnPropertyChanged(nameof(MappingItemsCount));
         //    }

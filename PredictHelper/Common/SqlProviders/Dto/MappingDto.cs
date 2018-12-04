@@ -1,13 +1,13 @@
 ﻿namespace PredictHelper
 {
-    public class PredicateMappingDto
+    public class MappingDto
     {
         public int PredicateId { get; set; }
         public int ContentTypeId { get; set; }
         public bool IsActive { get; set; }
     }
 
-    public class PredicateMappingDtoWithExistState: PredicateMappingDto
+    public class MappingDtoWithExistState: MappingDto
     {
         public ExistState ExistState { get; set; }
     }

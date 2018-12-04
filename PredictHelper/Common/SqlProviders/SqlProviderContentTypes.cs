@@ -4,9 +4,9 @@ using System.Data.SqlClient;
 
 namespace PredictHelper
 {
-    public class DBProviderContentTypes : DBProviderBase
+    public class SqlProviderContentTypes : SqlProviderBase
     {
-        public DBProviderContentTypes(string connectionString)
+        public SqlProviderContentTypes(string connectionString)
             : base(connectionString)
         {
         }

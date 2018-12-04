@@ -2,7 +2,7 @@
 
 namespace PredictHelper
 {
-    public class MappingItemViewModel : ViewModelBase
+    public class MappingItem : BaseInpc
     {
         private int _ContentTypeId;
         private bool _IsActive;
@@ -27,13 +27,13 @@ namespace PredictHelper
         public Dictionary<int, ContentType> ContentTypesDict;
         public string Name => ContentTypesDict[ContentTypeId].Name;
 
-        public MappingItemViewModel()
+        public MappingItem()
         {
             ExistState = ExistState.Initializing;
-            this.PropertyChanged += MappingItemViewModel_PropertyChanged;
+            this.PropertyChanged += MappingItem_PropertyChanged;
         }
 
-        private void MappingItemViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private void MappingItem_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(ExistState))
                 return;

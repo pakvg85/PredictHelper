@@ -9,9 +9,9 @@ namespace PredictHelper
     /// <summary>
     /// Класс для считывания/сохранения предикатов в БД
     /// </summary>
-    public class DBProviderPredicates : DBProviderBase
+    public class SqlProviderPredicates : SqlProviderBase
     {
-        public DBProviderPredicates(string connectionString)
+        public SqlProviderPredicates(string connectionString)
             : base(connectionString)
         {
         }
@@ -66,19 +66,19 @@ namespace PredictHelper
             }
         }
 
-        public void SavePredicateMappings(IEnumerable<PredicateMappingDtoWithExistState> list)
+        public void SavePredicateMappings(IEnumerable<MappingDtoWithExistState> list)
         {
             var dtNew = list
                 .Where(x => x.ExistState == ExistState.New)
-                .Select(x => (PredicateMappingDto)x)
+                .Select(x => (MappingDto)x)
                 .ToDataTable();
             var dtUpdated = list
                 .Where(x => x.ExistState == ExistState.Updated)
-                .Select(x => (PredicateMappingDto)x)
+                .Select(x => (MappingDto)x)
                 .ToDataTable();
             var dtToBeDeleted = list
                 .Where(x => x.ExistState == ExistState.ToBeDeleted)
-                .Select(x => (PredicateMappingDto)x)
+                .Select(x => (MappingDto)x)
                 .ToDataTable();
 
             using (var conn = GetNewConnection())
@@ -105,7 +105,7 @@ namespace PredictHelper
             }
         }
 
-        public IEnumerable<PredicateMappingDto> GetPredicateMappings(IEnumerable<int> predicateIdList)
+        public IEnumerable<MappingDto> GetPredicateMappings(IEnumerable<int> predicateIdList)
         {
             var dt = predicateIdList.ToDataTable();
 
@@ -122,7 +122,7 @@ namespace PredictHelper
                         nameof(GetPredicateMappings),
                         (x) =>
                         {
-                            var ci = new PredicateMappingDto();
+                            var ci = new MappingDto();
                             ci.PredicateId = x.GetInt32(0);
                             ci.ContentTypeId = x.GetInt32(1);
                             ci.IsActive = x.GetBoolean(2);
@@ -167,7 +167,7 @@ namespace PredictHelper
             }
         }
 
-        public IEnumerable<PredicateGroupDto> GetPredicateGroups()
+        public IEnumerable<GroupDto> GetPredicateGroups()
         {
             using (var conn = GetNewConnection())
             {
@@ -182,7 +182,7 @@ namespace PredictHelper
                         nameof(GetPredicateGroups),
                         (x) =>
                         {
-                            var ci = new PredicateGroupDto();
+                            var ci = new GroupDto();
                             ci.GroupId = x.GetInt32(0);
                             ci.Text = x.GetString(1);
                             return ci;

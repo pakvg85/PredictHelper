@@ -1,6 +1,6 @@
 ﻿namespace PredictHelper
 {
-    public class PredicateGroupViewModel : ViewModelBase
+    public class GroupItem : BaseInpc
     {
         private int _Id;
         private string _Text;
