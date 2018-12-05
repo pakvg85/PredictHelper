@@ -37,58 +37,6 @@ namespace PredictHelper.Models
             }
         }
 
-        public void DbSave()
-        {
-            ProcessMessage("Сохранение данных в БД...");
-
-            try
-            {
-                var predicatesDtoWithExistState = new List<PredicateDtoWithExistState>();
-                var mappingsDtoWithExistState = new List<MappingDtoWithExistState>();
-
-                foreach (var groupItem in GroupItems)
-                {
-                    var groupPredicatesDtoWithExistState = groupItem.PredicateItems
-                        .Where(x => x.ExistState != ExistState.Default)
-                        .Select(x => new PredicateDtoWithExistState
-                        {
-                            Guid = x.Guid,
-                            GroupGuid = x.GroupGuid,
-                            Id = x.Id, // Id не нужен для сохранения - связка с маппингами делается через Guid
-                            Text = x.Text,
-                            ExistState = x.ExistState
-                        });
-                    predicatesDtoWithExistState.AddRange(groupPredicatesDtoWithExistState);
-
-                    foreach (var predicate in groupItem.PredicateItems)
-                    {
-                        var predicateMappingsDtoWithExistState = predicate.MappingItems
-                            .Where(x => x.ExistState != ExistState.Default)
-                            .Select(x => new MappingDtoWithExistState
-                            {
-                                ContentTypeId = x.ContentTypeId,
-                                PredicateGuid = predicate.Guid,
-                                IsActive = x.IsActive,
-                                ExistState = x.ExistState
-                            });
-                        mappingsDtoWithExistState.AddRange(predicateMappingsDtoWithExistState);
-                    }
-
-                }
-
-                IEnumerable<int> newlyCreatedIds = null;
-                _sqlProviderPredicates.SavePredicatesAndMappings(predicatesDtoWithExistState, mappingsDtoWithExistState, out newlyCreatedIds);
-
-                ProcessMessage("Сохранение данных в БД завершено");
-
-                DbLoad(false);
-            }
-            catch (Exception ex)
-            {
-                ProcessException(ex);
-            }
-        }
-
         private void DbLoadContentTypes()
         {
             ContentTypesDict = _sqlProviderContentTypes.GetContentTypes()
@@ -159,6 +107,71 @@ namespace PredictHelper.Models
                 predicate.MappingItems.Clear();
                 predicate.MappingItems.AddRange(mappingList);
                 predicate.ExistState = savedPredicateExistState;
+            }
+        }
+
+        public void DbSave()
+        {
+            ProcessMessage("Сохранение данных в БД...");
+
+            try
+            {
+                var groupsDtoWithExistState = GroupItems
+                    .Where(x => x.ExistState != ExistState.Default)
+                    .Select(x => new GroupDtoWithExistState
+                    {
+                        Guid = x.Guid,
+                        Id = x.Id, // Id не нужен для сохранения - связка с предикатами сделана через Guid
+                        Text = x.Text,
+                        ExistState = x.ExistState
+                    });
+
+                var predicatesDtoWithExistState = new List<PredicateDtoWithExistState>();
+                var mappingsDtoWithExistState = new List<MappingDtoWithExistState>();
+
+                foreach (var groupItem in GroupItems)
+                {
+                    var groupPredicatesDtoWithExistState = groupItem.PredicateItems
+                        .Where(x => x.ExistState != ExistState.Default)
+                        .Select(x => new PredicateDtoWithExistState
+                        {
+                            Guid = x.Guid,
+                            GroupGuid = x.GroupGuid,
+                            Id = x.Id, // Id не нужен для сохранения - связка с маппингами сделана через Guid
+                            Text = x.Text,
+                            ExistState = x.ExistState
+                        });
+                    predicatesDtoWithExistState.AddRange(groupPredicatesDtoWithExistState);
+
+                    foreach (var predicate in groupItem.PredicateItems)
+                    {
+                        var predicateMappingsDtoWithExistState = predicate.MappingItems
+                            .Where(x => x.ExistState != ExistState.Default)
+                            .Select(x => new MappingDtoWithExistState
+                            {
+                                ContentTypeId = x.ContentTypeId,
+                                PredicateGuid = predicate.Guid,
+                                IsActive = x.IsActive,
+                                ExistState = x.ExistState
+                            });
+                        mappingsDtoWithExistState.AddRange(predicateMappingsDtoWithExistState);
+                    }
+
+                }
+
+                IEnumerable<int> newlyCreatedPredicateIdList = null;
+                _sqlProviderPredicates.SaveEverything(groupsDtoWithExistState,
+                                                      predicatesDtoWithExistState,
+                                                      mappingsDtoWithExistState,
+                                                      out newlyCreatedPredicateIdList);
+
+                ProcessMessage("Сохранение данных в БД завершено");
+
+                DbLoad(false);
+            }
+            catch (Exception ex)
+            {
+                ProcessException(ex);
             }
         }
 

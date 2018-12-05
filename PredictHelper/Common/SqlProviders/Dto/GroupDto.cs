@@ -8,4 +8,9 @@ namespace PredictHelper
         public int Id { get; set; }
         public string Text { get; set; }
     }
+
+    public class GroupDtoWithExistState : GroupDto
+    {
+        public ExistState ExistState { get; set; }
+    }
 }

@@ -58,9 +58,7 @@ namespace PredictHelper
         public MainViewModel()
         {
             Model = new MainModel();
-
             Model.EventMessageOccured += model_EventMessageOccured;
-
             Model.DbLoad();
         }
 

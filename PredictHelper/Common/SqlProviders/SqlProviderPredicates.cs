@@ -24,8 +24,23 @@ namespace PredictHelper
         /// </summary>
         /// <param name="list"></param>
         /// <returns></returns>
-        public void SavePredicatesAndMappings(IEnumerable<PredicateDtoWithExistState> predicates, IEnumerable<MappingDtoWithExistState> mappings, out IEnumerable<int> newlyCreatedIds)
+        public void SaveEverything(IEnumerable<GroupDtoWithExistState> groups,
+                                   IEnumerable<PredicateDtoWithExistState> predicates,
+                                   IEnumerable<MappingDtoWithExistState> mappings,
+                                   out IEnumerable<int> newlyCreatedPredicateIdList)
         {
+            var dtGroupsNew = groups
+                .Where(x => x.ExistState == ExistState.New)
+                .Select(x => (GroupDto)x)
+                .ToDataTable();
+            var dtGroupsUpdated = groups
+                .Where(x => x.ExistState == ExistState.Updated)
+                .Select(x => (GroupDto)x)
+                .ToDataTable();
+            var dtGroupsToBeDeleted = groups
+                .Where(x => x.ExistState == ExistState.ToBeDeleted)
+                .Select(x => (GroupDto)x)
+                .ToDataTable();
             var dtPredicatesNew = predicates
                 .Where(x => x.ExistState == ExistState.New)
                 .Select(x => (PredicateDto)x)
@@ -59,14 +74,17 @@ namespace PredictHelper
 
                     var result = ExecSpList(
                         conn,
-                        "[dbo].[SavePredicatesAndMappings]",
+                        "[dbo].[SaveEverything]",
                         0,
-                        nameof(SavePredicatesAndMappings),
+                        nameof(SaveEverything),
                         (x) =>
                         {
                             var newPredicateId = x.GetInt32(0);
                             return newPredicateId;
                         },
+                        new SqlParameter("@GroupListNew", dtGroupsNew),
+                        new SqlParameter("@GroupListUpdated", dtGroupsUpdated),
+                        new SqlParameter("@GroupListToBeDeleted", dtGroupsToBeDeleted),
                         new SqlParameter("@PredicateListNew", dtPredicatesNew),
                         new SqlParameter("@PredicateListUpdated", dtPredicatesUpdated),
                         new SqlParameter("@PredicateListToBeDeleted", dtPredicatesToBeDeleted),
@@ -75,7 +93,7 @@ namespace PredictHelper
                         new SqlParameter("@MappingListToBeDeleted", dtMappingsToBeDeleted)
                     );
 
-                    newlyCreatedIds = result;
+                    newlyCreatedPredicateIdList = result;
                 }
                 catch (Exception ex)
                 {
