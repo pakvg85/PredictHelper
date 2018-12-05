@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PredictHelper.Common
 {
@@ -10,8 +6,9 @@ namespace PredictHelper.Common
     {
         public string Message { get; set; }
         public MessageImportance MsgImportance { get; set; }
+        public Exception Ex { get; set; }
 
-        public MessageOccuredEventArgs(string message, MessageImportance msgImportance)
+        public MessageOccuredEventArgs(string message, MessageImportance msgImportance, Exception ex = null)
         {
             Message = message;
             MsgImportance = msgImportance;

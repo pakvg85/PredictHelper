@@ -57,8 +57,9 @@ namespace PredictHelper
 
         public MainViewModel()
         {
-            Model = new MainModel();
-            Model.EventMessageOccured += model_EventMessageOccured;
+            Model = new MainModel(System.Configuration.ConfigurationManager.AppSettings["FileNameConnectionPredicates"],    // @"connectionStringPredicates.config",
+                                  System.Configuration.ConfigurationManager.AppSettings["FileNameConnectionContentTypes"]); //@"connectionStringContentTypes.config")
+            Model.EventMessageOccured += Model_EventMessageOccured;
             Model.DbLoad();
         }
 
@@ -128,9 +129,12 @@ namespace PredictHelper
             });
         }
 
-        private void model_EventMessageOccured(object sender, MessageOccuredEventArgs e)
+        private void Model_EventMessageOccured(object sender, MessageOccuredEventArgs e)
         {
-            ProcessMessage(e.Message, e.MsgImportance);
+            if (e.Ex != null)
+                ProcessException(e.Ex, e.MsgImportance);
+            else
+                ProcessMessage(e.Message, e.MsgImportance);
         }
     }
 }

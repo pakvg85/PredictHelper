@@ -6,11 +6,9 @@ namespace PredictHelper
 {
     public class SqlProviderContentTypes : SqlProviderBase
     {
-        public SqlProviderContentTypes(string connectionString = null)
+        public SqlProviderContentTypes(string connectionString)
             : base(connectionString)
         {
-            var connectionStringContentTypes = File.ReadAllText(@"connectionStringContentTypes.config");
-            _connectionString = connectionStringContentTypes;
         }
 
         public IEnumerable<ContentTypeDto> GetContentTypes()

@@ -8,24 +8,28 @@ namespace PredictHelper.Models
     public class MainModel : BaseInpc
     {
         private ObservableCollectionExt<GroupItem> _GroupItems;
-        private SqlProviderPredicates _sqlProviderPredicates = new SqlProviderPredicates();
-        private SqlProviderContentTypes _sqlProviderContentTypes = new SqlProviderContentTypes();
+        private SqlProviderPredicates _sqlProviderPredicates;
+        private SqlProviderContentTypes _sqlProviderContentTypes;
 
         public Dictionary<int, ContentType> ContentTypesDict { get; set; }
         public ObservableCollectionExt<GroupItem> GroupItems { get => _GroupItems; set => SetField(ref _GroupItems, value); }
 
-        public MainModel()
+        /// <param name="fileNameConnectionPredicates">Имя файла, который содержит строку подключения к БД с таблицами предикатов</param>
+        /// <param name="fileNameConnectionContentTypes">Имя файла, который содержит строку подключения к БД с таблицей ContentTypes</param>
+        public MainModel(string fileNameConnectionPredicates, string fileNameConnectionContentTypes)
         {
             GroupItems = new ObservableCollectionExt<GroupItem>();
+            _sqlProviderPredicates = new SqlProviderPredicates(System.IO.File.ReadAllText(fileNameConnectionPredicates));
+            _sqlProviderContentTypes = new SqlProviderContentTypes(System.IO.File.ReadAllText(fileNameConnectionContentTypes));
         }
 
-        public void DbLoad(bool loadEVERYTHING = true)
+        public void DbLoad(bool loadEverything = true)
         {
             ProcessMessage("Считывание данных из БД...");
 
             try
             {
-                if (loadEVERYTHING)
+                if (loadEverything)
                     DbLoadContentTypes();
                 DbLoadPredicateGroups();
 
@@ -159,11 +163,10 @@ namespace PredictHelper.Models
 
                 }
 
-                IEnumerable<int> newlyCreatedPredicateIdList = null;
                 _sqlProviderPredicates.SaveEverything(groupsDtoWithExistState,
                                                       predicatesDtoWithExistState,
                                                       mappingsDtoWithExistState,
-                                                      out newlyCreatedPredicateIdList);
+                                                      out var newlyCreatedPredicateIdList);
 
                 ProcessMessage("Сохранение данных в БД завершено");
 
@@ -177,80 +180,34 @@ namespace PredictHelper.Models
 
         public void ProcessPredicates(GroupItem singleGroupItem = null)
         {
-            var groupsTmp = _sqlProviderPredicates.GetGroupsTmp();
+            ProcessMessage("Поиск соответствий для предикатов...");
 
-            foreach (var groupTmp in groupsTmp)
+            try
             {
-                var newGroupItem = new GroupItem
+                if (singleGroupItem == null)
                 {
-                    Guid = Guid.NewGuid(),
-                    Id = groupTmp.Id,
-                    Text = groupTmp.Text
-                };
-
-                var newPredicateItemList = new List<PredicateItem>();
-                var predicatesTmp = _sqlProviderPredicates.GetPredicatesTmp(newGroupItem.Id);
-                foreach (var predicateTmp in predicatesTmp)
-                {
-                    var newPredicateItem = new PredicateItem
+                    foreach (var groupItem in GroupItems)
                     {
-                        Guid = Guid.NewGuid(),
-                        GroupGuid = newGroupItem.Guid,
-                        Id = predicateTmp.Id,
-                        Text = predicateTmp.Text,
-                        ExistState = ExistState.New,
-                    };
-                    newPredicateItemList.Add(newPredicateItem);
-
-                    var newMappingItemList = new List<MappingItem>();
-                    var mappingsTmp = _sqlProviderPredicates.GetMappingsTmp(newPredicateItem.Id);
-                    foreach (var mappingTmp in mappingsTmp)
-                    {
-                        var newMappingTmp = new MappingItem
+                        foreach (var predicate in groupItem.PredicateItems)
                         {
-                            ContentTypeId = mappingTmp.ContentTypeId,
-                            PredicateGuid = newPredicateItem.Guid,
-                            IsActive = mappingTmp.IsActive,
-                            ContentTypesDict = ContentTypesDict,
-                            ExistState = ExistState.New
-                        };
-                        newMappingItemList.Add(newMappingTmp);
+                            Process(predicate, ContentTypesDict);
+                        }
                     }
-                    newPredicateItem.MappingItems.AddRange(newMappingItemList);
                 }
-                newGroupItem.PredicateItems.AddRange(newPredicateItemList);
+                else
+                {
+                    foreach (var predicate in singleGroupItem.PredicateItems)
+                    {
+                        Process(predicate, ContentTypesDict);
+                    }
+                }
 
-                GroupItems.Add(newGroupItem);
+                ProcessMessage("Поиск соответствий для предикатов завершен");
             }
-
-            //ProcessMessage("Поиск соответствий для предикатов...");
-
-            //try
-            //{
-            //    if (singleGroupItem == null)
-            //    {
-            //        foreach (var groupItem in GroupItems)
-            //        {
-            //            foreach (var predicate in groupItem.PredicateItems)
-            //            {
-            //                Process(predicate, ContentTypesDict);
-            //            }
-            //        }
-            //    }
-            //    else
-            //    {
-            //        foreach (var predicate in singleGroupItem.PredicateItems)
-            //        {
-            //            Process(predicate, ContentTypesDict);
-            //        }
-            //    }
-
-            //    ProcessMessage("Поиск соответствий для предикатов завершен");
-            //}
-            //catch (Exception ex)
-            //{
-            //    ProcessException(ex);
-            //}
+            catch (Exception ex)
+            {
+                ProcessException(ex);
+            }
         }
 
         public void Process(PredicateItem predicate, Dictionary<int, ContentType> ContentTypesDict)
@@ -316,7 +273,8 @@ namespace PredictHelper.Models
         public event EventHandler<MessageOccuredEventArgs> EventMessageOccured;
         public void ProcessException(Exception ex, MessageImportance msgImportance = MessageImportance.Error)
         {
-            ProcessMessage(ex.Message + " (детальное инфо об ошибке - в файле лога в папке с программой)", msgImportance);
+            //ProcessMessage(ex.Message + " (детальное инфо об ошибке - в файле лога в папке с программой)", msgImportance);
+            EventMessageOccured?.Invoke(this, new MessageOccuredEventArgs(ex.Message + " (детальное инфо об ошибке - в файле лога в папке с программой)", msgImportance, ex));
         }
         public void ProcessMessage(string msg, MessageImportance msgImportance = MessageImportance.Info)
         {

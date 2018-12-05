@@ -74,7 +74,7 @@ namespace PredictHelper
 
                     var result = ExecSpList(
                         conn,
-                        "[dbo].[SaveEverything]",
+                        "[dbo].[SaveAll]",
                         0,
                         nameof(SaveEverything),
                         (x) =>
@@ -183,7 +183,7 @@ namespace PredictHelper
 
                     return ExecSpList(
                         conn,
-                        "[dbo].[GetPredicateGroups]",
+                        "[dbo].[GetGroups]",
                         0,
                         nameof(GetGroups),
                         (x) =>
@@ -222,7 +222,7 @@ namespace PredictHelper
 
                     return ExecSpList(
                         conn,
-                        "[dbo].[GetMappingsForPredicatesTmp]",
+                        "[Temp].[dbo].[GetMappingsForPredicatesTmp]",
                         0,
                         nameof(GetMappingsTmp),
                         (x) =>
@@ -258,7 +258,7 @@ namespace PredictHelper
 
                     return ExecSpList(
                         conn,
-                        "[dbo].[GetPredicatesForGroupsTmp]",
+                        "[Temp].[dbo].[GetPredicatesForGroupsTmp]",
                         0,
                         nameof(GetPredicates),
                         (x) =>
@@ -288,7 +288,7 @@ namespace PredictHelper
 
                     return ExecSpList(
                         conn,
-                        "[dbo].[GetPredicateGroupsTmp]",
+                        "[Temp].[dbo].[GetPredicateGroupsTmp]",
                         0,
                         nameof(GetGroups),
                         (x) =>

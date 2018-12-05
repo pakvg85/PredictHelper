@@ -15,7 +15,7 @@ namespace PredictHelper
         public ExistState ExistState { get => _ExistState; set => SetField(ref _ExistState, value); }
         public Guid Guid { get; set; }
 
-        override public string ToString() => Text + $" (Id {Id.ToString()})";
+        override public string ToString() => $"[{ExistState}] {Text} (Id {Id.ToString()})";
 
         public GroupItem()
         {
