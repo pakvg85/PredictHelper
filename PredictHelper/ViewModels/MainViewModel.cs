@@ -61,6 +61,9 @@ namespace PredictHelper
                                   System.Configuration.ConfigurationManager.AppSettings["FileNameConnectionContentTypes"]); //@"connectionStringContentTypes.config")
             Model.EventMessageOccured += Model_EventMessageOccured;
             Model.DbLoad();
+
+            CurrentGroup = Model.GroupItems.FirstOrDefault();
+            CurrentPredicate = CurrentPredicates.FirstOrDefault();
         }
 
         private void OnDeleteButtonPressed(object SelectedItems)

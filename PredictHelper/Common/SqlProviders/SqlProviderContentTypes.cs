@@ -21,7 +21,7 @@ namespace PredictHelper
 
                     return ExecSpList(
                         conn,
-                        "[dbo].[GetContentTypes]",
+                        "Predicates.[dbo].[GetContentTypes]",
                         0,
                         nameof(GetContentTypes),
                         (x) =>

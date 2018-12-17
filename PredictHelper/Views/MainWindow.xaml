@@ -37,7 +37,7 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="3*" />
             <ColumnDefinition Width="3" />
-            <ColumnDefinition Width="4*" />
+            <ColumnDefinition Width="2*" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -113,8 +113,20 @@
                                                           Converter={StaticResource ExistStateToTextConverter}}"/>
                     <DataGridTextColumn Header="Текст предиката" 
                                         CellStyle="{StaticResource DataGridEditableCellStyle}"
-                                        Width="400"
+                                        Width="300"
                                         Binding="{Binding Path=Text}"/>
+                    <DataGridTextColumn Header="Сторона" 
+                                        CellStyle="{StaticResource DataGridEditableCellStyle}"
+                                        Width="60"
+                                        Binding="{Binding Path=SideGroupId}"/>
+                    <DataGridTextColumn Header="Совет 1" 
+                                        CellStyle="{StaticResource DataGridEditableCellStyle}"
+                                        Width="200"
+                                        Binding="{Binding Path=Advice1}"/>
+                    <DataGridTextColumn Header="Совет 2" 
+                                        CellStyle="{StaticResource DataGridEditableCellStyle}"
+                                        Width="200"
+                                        Binding="{Binding Path=Advice2}"/>
                     <DataGridTextColumn Header="Совпадений" 
                                         CellStyle="{StaticResource DataGridReadonlyCellStyle}"
                                         IsReadOnly="True"

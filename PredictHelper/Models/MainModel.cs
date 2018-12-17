@@ -82,6 +82,9 @@ namespace PredictHelper.Models
                         Id = x.Id,
                         GroupGuid = x.GroupGuid,
                         Text = x.Text,
+                        SideGroupId = x.SideGroupId,
+                        Advice1 = x.Advice1,
+                        Advice2 = x.Advice2,
                         ExistState = ExistState.Default
                     })
                     .ToList()
@@ -143,6 +146,9 @@ namespace PredictHelper.Models
                             GroupGuid = x.GroupGuid,
                             Id = x.Id, // Id не нужен для сохранения - связка с маппингами сделана через Guid
                             Text = x.Text,
+                            SideGroupId = x.SideGroupId,
+                            Advice1 = x.Advice1,
+                            Advice2 = x.Advice2,
                             ExistState = x.ExistState
                         });
                     predicatesDtoWithExistState.AddRange(groupPredicatesDtoWithExistState);

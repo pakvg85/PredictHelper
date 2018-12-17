@@ -7,13 +7,20 @@ namespace PredictHelper
     {
         private int _Id;
         private string _Text;
+        private byte? _SideGroupId;
+        private string _Advice1;
+        private string _Advice2;
         private ObservableCollectionExt<MappingItem> _MappingItems;
         private ExistState _ExistState;
 
         public int Id { get => _Id; set => SetField(ref _Id, value); }
         public string Text { get => _Text; set => SetField(ref _Text, value); }
+        public byte? SideGroupId { get => _SideGroupId; set => SetField(ref _SideGroupId, value); }
+        public string Advice1 { get => _Advice1; set => SetField(ref _Advice1, value); }
+        public string Advice2 { get => _Advice2; set => SetField(ref _Advice2, value); }
         public ObservableCollectionExt<MappingItem> MappingItems { get => _MappingItems; set => SetField(ref _MappingItems, value); }
         public ExistState ExistState { get => _ExistState; set => SetField(ref _ExistState, value); }
+
         public Guid Guid { get; set; }
         public Guid GroupGuid { get; set; }
 
