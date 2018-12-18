@@ -80,6 +80,8 @@
     <Compile Include="Common\SqlProviders\SqlProviderBase.cs" />
     <Compile Include="Common\ExistState.cs" />
     <Compile Include="Common\Converters\ExistStateToTextConverter.cs" />
+    <Compile Include="Models\AdviceGroupItem.cs" />
+    <Compile Include="Models\AdviceItem.cs" />
     <Compile Include="Models\MainModel.cs" />
     <Compile Include="Models\MappingItem.cs" />
     <Compile Include="Views\MessageBoxDialogWindow.xaml.cs">

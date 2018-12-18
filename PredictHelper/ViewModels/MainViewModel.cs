@@ -57,8 +57,8 @@ namespace PredictHelper
 
         public MainViewModel()
         {
-            Model = new MainModel(System.Configuration.ConfigurationManager.AppSettings["FileNameConnectionPredicates"],    // @"connectionStringPredicates.config",
-                                  System.Configuration.ConfigurationManager.AppSettings["FileNameConnectionContentTypes"]); //@"connectionStringContentTypes.config")
+            Model = new MainModel(System.Configuration.ConfigurationManager.AppSettings["Predicates"],
+                                  System.Configuration.ConfigurationManager.AppSettings["ContentTypes"]);
             Model.EventMessageOccured += Model_EventMessageOccured;
             Model.DbLoad();
 
@@ -110,7 +110,14 @@ namespace PredictHelper
 
                 CurrentPredicates.AddRange(newPredicateTexts
                     .Where(x => !string.IsNullOrEmpty(x))
-                    .Select(x => new PredicateItem { Text = x }));
+                    .Select(x => new PredicateItem
+                    {
+                        Guid = Guid.NewGuid(),
+                        GroupGuid = CurrentGroup.Guid,
+                        Text = x,
+                        SideGroupId = 0
+                        //ExistState = ExistState.New
+                    }));
             }
         }
 

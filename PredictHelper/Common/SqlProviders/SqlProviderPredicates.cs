@@ -15,8 +15,6 @@ namespace PredictHelper
         public SqlProviderPredicates(string connectionString = null)
             : base(connectionString)
         {
-            var connectionStringDef = File.ReadAllText(@"connectionStringPredicates.config");
-            _connectionString = connectionStringDef;
         }
 
         /// <summary>
@@ -74,7 +72,7 @@ namespace PredictHelper
 
                     var result = ExecSpList(
                         conn,
-                        "[dbo].[SaveAll]",
+                        "Predicates.[dbo].[SaveAll]",
                         0,
                         nameof(SaveEverything),
                         (x) =>
@@ -114,7 +112,7 @@ namespace PredictHelper
 
                     return ExecSpList(
                         conn,
-                        "[dbo].[GetMappingsForPredicates]",
+                        "Predicates.[dbo].[GetMappingsForPredicates]",
                         0,
                         nameof(GetMappings),
                         (x) =>
@@ -151,7 +149,7 @@ namespace PredictHelper
 
                     return ExecSpList(
                         conn,
-                        "[dbo].[GetPredicatesForGroups]",
+                        "Predicates.[dbo].[GetPredicatesForGroups]",
                         0,
                         nameof(GetPredicates),
                         (x) =>
@@ -162,8 +160,7 @@ namespace PredictHelper
                             ci.Id = x.GetInt32(2);
                             ci.Text = x.GetString(3);
                             ci.SideGroupId = x.IsDBNull(4) ? (byte?)null : x.GetByte(4);
-                            ci.Advice1 = x.IsDBNull(5) ? null : x.GetString(5);
-                            ci.Advice2 = x.IsDBNull(6) ? null : x.GetString(6);
+                            ci.AdviceGroupId = x.IsDBNull(5) ? (int?)null : x.GetInt32(5);
                             return ci;
                         },
                         new SqlParameter("@GroupIdList", dt)
@@ -186,7 +183,7 @@ namespace PredictHelper
 
                     return ExecSpList(
                         conn,
-                        "[dbo].[GetGroups]",
+                        "Predicates.[dbo].[GetGroups]",
                         0,
                         nameof(GetGroups),
                         (x) =>
@@ -205,112 +202,6 @@ namespace PredictHelper
                 }
             }
         }
-
-        // ====================================================================================
-
-        public IEnumerable<MappingDto> GetMappingsTmp(int predicateId)
-        {
-            return GetMappingsTmp(new List<int> { predicateId });
-        }
-
-        public IEnumerable<MappingDto> GetMappingsTmp(IEnumerable<int> predicateIdList)
-        {
-            var dt = predicateIdList.ToDataTable();
-
-            using (var conn = GetNewConnection())
-            {
-                try
-                {
-                    conn.Open();
-
-                    return ExecSpList(
-                        conn,
-                        "[Temp].[dbo].[GetMappingsForPredicatesTmp]",
-                        0,
-                        nameof(GetMappingsTmp),
-                        (x) =>
-                        {
-                            var ci = new MappingDto();
-                            ci.ContentTypeId = x.GetInt32(0);
-                            ci.IsActive = x.GetBoolean(2);
-                            return ci;
-                        },
-                        new SqlParameter("@PredicateIdList", dt));
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
-            }
-        }
-
-        public IEnumerable<PredicateDto> GetPredicatesTmp(int predicatesGroupId)
-        {
-            return GetPredicatesTmp(new List<int> { predicatesGroupId });
-        }
-
-        public IEnumerable<PredicateDto> GetPredicatesTmp(IEnumerable<int> predicatesGroupIdList)
-        {
-            var dt = predicatesGroupIdList.ToDataTable();
-
-            using (var conn = GetNewConnection())
-            {
-                try
-                {
-                    conn.Open();
-
-                    return ExecSpList(
-                        conn,
-                        "[Temp].[dbo].[GetPredicatesForGroupsTmp]",
-                        0,
-                        nameof(GetPredicates),
-                        (x) =>
-                        {
-                            var ci = new PredicateDto();
-                            ci.Id = x.GetInt32(1);
-                            ci.Text = x.GetString(2);
-                            return ci;
-                        },
-                        new SqlParameter("@GroupIdList", dt)
-                    );
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
-            }
-        }
-
-        public IEnumerable<GroupDto> GetGroupsTmp()
-        {
-            using (var conn = GetNewConnection())
-            {
-                try
-                {
-                    conn.Open();
-
-                    return ExecSpList(
-                        conn,
-                        "[Temp].[dbo].[GetPredicateGroupsTmp]",
-                        0,
-                        nameof(GetGroups),
-                        (x) =>
-                        {
-                            var ci = new GroupDto();
-                            ci.Id = x.GetInt32(0);
-                            ci.Text = x.GetString(1);
-                            return ci;
-                        }
-                    );
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
-            }
-        }
-
-        // ====================================================================================
 
     }
 }

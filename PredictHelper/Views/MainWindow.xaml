@@ -110,14 +110,19 @@
                                         CellStyle="{StaticResource DataGridEditableCellStyle}"
                                         Width="60"
                                         Binding="{Binding Path=SideGroupId}"/>
-                    <DataGridTextColumn Header="Совет 1" 
-                                        CellStyle="{StaticResource DataGridEditableCellStyle}"
-                                        Width="200"
-                                        Binding="{Binding Path=Advice1}"/>
-                    <DataGridTextColumn Header="Совет 2" 
-                                        CellStyle="{StaticResource DataGridEditableCellStyle}"
-                                        Width="200"
-                                        Binding="{Binding Path=Advice2}"/>
+                    <!--<DataGridComboBoxColumn Header="Сторона"
+                                            ItemsSource="{x:Static local:CommonExtensions.GetEnumTypes}" 
+                                            SelectedItemBinding="{Binding SideGroup}">
+                        <DataGridComboBoxColumn.EditingElementStyle>
+                            <Style TargetType="ComboBox">
+                                <Setter Property="IsEditable" Value="True"/>
+                            </Style>
+                        </DataGridComboBoxColumn.EditingElementStyle>
+                    </DataGridComboBoxColumn>-->
+                    <DataGridTextColumn Header="Группа советов"
+                                        CellStyle="{StaticResource DataGridReadonlyCellStyle}"
+                                        Width="100"
+                                        Binding="{Binding Path=AdviceGroup.ShortDescription}"/>
                     <DataGridTextColumn Header="Совпадений" 
                                         CellStyle="{StaticResource DataGridReadonlyCellStyle}"
                                         IsReadOnly="True"

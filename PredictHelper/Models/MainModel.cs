@@ -12,15 +12,15 @@ namespace PredictHelper.Models
         private SqlProviderContentTypes _sqlProviderContentTypes;
 
         public Dictionary<int, ContentType> ContentTypesDict { get; set; }
+        public Dictionary<int, AdviceGroupItem> AdviceGroupItemsDict { get; set; }
+
         public ObservableCollectionExt<GroupItem> GroupItems { get => _GroupItems; set => SetField(ref _GroupItems, value); }
 
-        /// <param name="fileNameConnectionPredicates">Имя файла, который содержит строку подключения к БД с таблицами предикатов</param>
-        /// <param name="fileNameConnectionContentTypes">Имя файла, который содержит строку подключения к БД с таблицей ContentTypes</param>
-        public MainModel(string fileNameConnectionPredicates, string fileNameConnectionContentTypes)
+        public MainModel(string ConnectionPredicates, string ConnectionContentTypes)
         {
             GroupItems = new ObservableCollectionExt<GroupItem>();
-            _sqlProviderPredicates = new SqlProviderPredicates(System.IO.File.ReadAllText(fileNameConnectionPredicates));
-            _sqlProviderContentTypes = new SqlProviderContentTypes(System.IO.File.ReadAllText(fileNameConnectionContentTypes));
+            _sqlProviderPredicates = new SqlProviderPredicates(ConnectionPredicates);
+            _sqlProviderContentTypes = new SqlProviderContentTypes(ConnectionContentTypes);
         }
 
         public void DbLoad(bool loadEverything = true)
@@ -83,8 +83,8 @@ namespace PredictHelper.Models
                         GroupGuid = x.GroupGuid,
                         Text = x.Text,
                         SideGroupId = x.SideGroupId,
-                        Advice1 = x.Advice1,
-                        Advice2 = x.Advice2,
+                        AdviceGroupId = x.AdviceGroupId,
+                        AdviceGroupItemsDict = AdviceGroupItemsDict,
                         ExistState = ExistState.Default
                     })
                     .ToList()
@@ -147,8 +147,8 @@ namespace PredictHelper.Models
                             Id = x.Id, // Id не нужен для сохранения - связка с маппингами сделана через Guid
                             Text = x.Text,
                             SideGroupId = x.SideGroupId,
-                            Advice1 = x.Advice1,
-                            Advice2 = x.Advice2,
+                            //Advice1 = x.Advice1,
+                            //Advice2 = x.Advice2,
                             ExistState = x.ExistState
                         });
                     predicatesDtoWithExistState.AddRange(groupPredicatesDtoWithExistState);
