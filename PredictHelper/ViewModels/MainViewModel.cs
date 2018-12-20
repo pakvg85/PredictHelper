@@ -115,7 +115,7 @@ namespace PredictHelper
                         Guid = Guid.NewGuid(),
                         GroupGuid = CurrentGroup.Guid,
                         Text = x,
-                        SideGroupId = 0
+                        SideGroupId = null
                         //ExistState = ExistState.New
                     }));
             }

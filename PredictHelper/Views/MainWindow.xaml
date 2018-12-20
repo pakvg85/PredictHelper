@@ -119,10 +119,10 @@
                             </Style>
                         </DataGridComboBoxColumn.EditingElementStyle>
                     </DataGridComboBoxColumn>-->
-                    <DataGridTextColumn Header="Группа советов"
+                    <!--<DataGridTextColumn Header="Группа советов"
                                         CellStyle="{StaticResource DataGridReadonlyCellStyle}"
                                         Width="100"
-                                        Binding="{Binding Path=AdviceGroup.ShortDescription}"/>
+                                        Binding="{Binding Path=AdviceGroup.ShortDescription}"/>-->
                     <DataGridTextColumn Header="Совпадений" 
                                         CellStyle="{StaticResource DataGridReadonlyCellStyle}"
                                         IsReadOnly="True"

@@ -160,7 +160,7 @@ namespace PredictHelper
                             ci.Id = x.GetInt32(2);
                             ci.Text = x.GetString(3);
                             ci.SideGroupId = x.IsDBNull(4) ? (byte?)null : x.GetByte(4);
-                            ci.AdviceGroupId = x.IsDBNull(5) ? (int?)null : x.GetInt32(5);
+                            //ci.AdviceGroupId = x.IsDBNull(5) ? (int?)null : x.GetInt32(5);
                             return ci;
                         },
                         new SqlParameter("@GroupIdList", dt)

@@ -12,7 +12,7 @@ namespace PredictHelper.Models
         private SqlProviderContentTypes _sqlProviderContentTypes;
 
         public Dictionary<int, ContentType> ContentTypesDict { get; set; }
-        public Dictionary<int, AdviceGroupItem> AdviceGroupItemsDict { get; set; }
+        //public Dictionary<int, AdviceGroupItem> AdviceGroupItemsDict { get; set; }
 
         public ObservableCollectionExt<GroupItem> GroupItems { get => _GroupItems; set => SetField(ref _GroupItems, value); }
 
@@ -83,8 +83,8 @@ namespace PredictHelper.Models
                         GroupGuid = x.GroupGuid,
                         Text = x.Text,
                         SideGroupId = x.SideGroupId,
-                        AdviceGroupId = x.AdviceGroupId,
-                        AdviceGroupItemsDict = AdviceGroupItemsDict,
+                        //AdviceGroupId = x.AdviceGroupId,
+                        //AdviceGroupItemsDict = AdviceGroupItemsDict,
                         ExistState = ExistState.Default
                     })
                     .ToList()
