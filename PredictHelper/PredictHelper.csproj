@@ -38,6 +38,7 @@
     <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
       <HintPath>..\packages\NLog.4.5.11\lib\net45\NLog.dll</HintPath>
     </Reference>
+    <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
@@ -59,7 +60,6 @@
     </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
     <Reference Include="WPFGlobalExceptionHandling, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\WPFGlobalExceptionHandling.1.0.0\lib\net452\WPFGlobalExceptionHandling.dll</HintPath>
     </Reference>
@@ -72,8 +72,10 @@
     <Compile Include="Common\Converters\BooleanValueInverter.cs" />
     <Compile Include="Common\Extensions\CommonExtensions.DataTable.cs" />
     <Compile Include="Common\Extensions\CommonExtensions.Sql.cs" />
+    <Compile Include="Common\Extensions\CommonExtensions.XamlXtd.cs" />
     <Compile Include="Common\MessageImportance.cs" />
     <Compile Include="Common\MessageOccuredEventArgs.cs" />
+    <Compile Include="Common\SqlProviders\Dto\AdviceGroupItemDto.cs" />
     <Compile Include="Common\SqlProviders\Dto\ContentTypeDto.cs" />
     <Compile Include="Common\SqlProviders\SqlProviderContentTypes.cs" />
     <Compile Include="Common\SqlProviders\SqlProviderPredicates.cs" />

@@ -115,7 +115,10 @@ namespace PredictHelper
                         Guid = Guid.NewGuid(),
                         GroupGuid = CurrentGroup.Guid,
                         Text = x,
-                        SideGroupId = null
+                        //SideGroupId = null,
+                        SideGroup = null,
+                        AdviceGroupId = null,
+                        AdviceGroupItemsDict = Model.AdviceGroupItemsDict
                         //ExistState = ExistState.New
                     }));
             }

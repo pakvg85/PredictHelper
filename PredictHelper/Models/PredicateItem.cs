@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace PredictHelper
@@ -7,20 +8,23 @@ namespace PredictHelper
     {
         private int _Id;
         private string _Text;
-        private byte? _SideGroupId;
-        //private int? _AdviceGroupId;
+        //private byte? _SideGroupId;
+        private SideGroup? _SideGroup;
+        private int? _AdviceGroupId;
         private ObservableCollectionExt<MappingItem> _MappingItems;
         private ExistState _ExistState;
 
         public int Id { get => _Id; set => SetField(ref _Id, value); }
         public string Text { get => _Text; set => SetField(ref _Text, value); }
-        public byte? SideGroupId { get => _SideGroupId; set => SetField(ref _SideGroupId, value); }
-        //public int? AdviceGroupId { get => _AdviceGroupId; set => SetField(ref _AdviceGroupId, value); }
+        //public byte? SideGroupId { get => _SideGroupId; set => SetField(ref _SideGroupId, value); }
+        public SideGroup? SideGroup { get => _SideGroup; set => SetField(ref _SideGroup, value); }
+        public int? AdviceGroupId { get => _AdviceGroupId; set => SetField(ref _AdviceGroupId, value); }
         public ObservableCollectionExt<MappingItem> MappingItems { get => _MappingItems; set => SetField(ref _MappingItems, value); }
         public ExistState ExistState { get => _ExistState; set => SetField(ref _ExistState, value); }
 
         public Guid Guid { get; set; }
         public Guid GroupGuid { get; set; }
+        public Dictionary<int, AdviceGroupItem> AdviceGroupItemsDict;
 
         public int MappingItemsCount => MappingItems.Where(x => x.ExistState != ExistState.ToBeDeleted).Count();
         public PredicateItem()

@@ -12,7 +12,7 @@ namespace PredictHelper.Models
         private SqlProviderContentTypes _sqlProviderContentTypes;
 
         public Dictionary<int, ContentType> ContentTypesDict { get; set; }
-        //public Dictionary<int, AdviceGroupItem> AdviceGroupItemsDict { get; set; }
+        public Dictionary<int, AdviceGroupItem> AdviceGroupItemsDict { get; set; }
 
         public ObservableCollectionExt<GroupItem> GroupItems { get => _GroupItems; set => SetField(ref _GroupItems, value); }
 
@@ -30,7 +30,11 @@ namespace PredictHelper.Models
             try
             {
                 if (loadEverything)
+                {
                     DbLoadContentTypes();
+                    DbLoadAdviceGroups();
+                }
+
                 DbLoadPredicateGroups();
 
                 ProcessMessage("Считывание данных из БД завершено");
@@ -49,7 +53,19 @@ namespace PredictHelper.Models
                     Id = i.Id,
                     Name = i.Name
                 }
-                );
+            );
+        }
+
+        private void DbLoadAdviceGroups()
+        {
+            AdviceGroupItemsDict = _sqlProviderPredicates.GetAllAdvices()
+                .ToDictionary(x => x.Id, i => new AdviceGroupItem
+                {
+                    Id = i.Id,
+                    PredicateGroupId = i.PredicateGroupId,
+                    ShortDescription = i.ShortDescription
+                }
+            );
         }
 
         private void DbLoadPredicateGroups()
@@ -82,9 +98,14 @@ namespace PredictHelper.Models
                         Id = x.Id,
                         GroupGuid = x.GroupGuid,
                         Text = x.Text,
-                        SideGroupId = x.SideGroupId,
-                        //AdviceGroupId = x.AdviceGroupId,
-                        //AdviceGroupItemsDict = AdviceGroupItemsDict,
+                        //SideGroupId = x.SideGroupId,
+                        SideGroup = (x.SideGroupId == null) ? (SideGroup?)null
+                                  : (x.SideGroupId == 1) ? SideGroup.Claimant
+                                  : (x.SideGroupId == 2) ? SideGroup.Defendant
+                                  : (x.SideGroupId == 3) ? SideGroup.ThirdParty
+                                  : SideGroup.Undefined,
+                        AdviceGroupId = x.AdviceGroupId,
+                        AdviceGroupItemsDict = AdviceGroupItemsDict,
                         ExistState = ExistState.Default
                     })
                     .ToList()
@@ -146,9 +167,9 @@ namespace PredictHelper.Models
                             GroupGuid = x.GroupGuid,
                             Id = x.Id, // Id не нужен для сохранения - связка с маппингами сделана через Guid
                             Text = x.Text,
-                            SideGroupId = x.SideGroupId,
-                            //Advice1 = x.Advice1,
-                            //Advice2 = x.Advice2,
+                            //SideGroupId = x.SideGroupId,
+                            SideGroupId = (byte)x.SideGroup,
+                            AdviceGroupId = x.AdviceGroupId,
                             ExistState = x.ExistState
                         });
                     predicatesDtoWithExistState.AddRange(groupPredicatesDtoWithExistState);

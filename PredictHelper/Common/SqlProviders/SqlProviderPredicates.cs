@@ -160,7 +160,7 @@ namespace PredictHelper
                             ci.Id = x.GetInt32(2);
                             ci.Text = x.GetString(3);
                             ci.SideGroupId = x.IsDBNull(4) ? (byte?)null : x.GetByte(4);
-                            //ci.AdviceGroupId = x.IsDBNull(5) ? (int?)null : x.GetInt32(5);
+                            ci.AdviceGroupId = x.IsDBNull(5) ? (int?)null : x.GetInt32(5);
                             return ci;
                         },
                         new SqlParameter("@GroupIdList", dt)
@@ -183,7 +183,7 @@ namespace PredictHelper
 
                     return ExecSpList(
                         conn,
-                        "Predicates.[dbo].[GetGroups]",
+                        "Predicates.[dbo].[GetAllGroups]",
                         0,
                         nameof(GetGroups),
                         (x) =>
@@ -192,6 +192,36 @@ namespace PredictHelper
                             ci.Guid = x.GetGuid(0);
                             ci.Id = x.GetInt32(1);
                             ci.Text = x.GetString(2);
+                            return ci;
+                        }
+                    );
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+            }
+        }
+
+        public IEnumerable<AdviceGroupItemDto> GetAllAdvices()
+        {
+            using (var conn = GetNewConnection())
+            {
+                try
+                {
+                    conn.Open();
+
+                    return ExecSpList(
+                        conn,
+                        "Predicates.[dbo].[GetAllAdvices]",
+                        0,
+                        nameof(GetAllAdvices),
+                        (x) =>
+                        {
+                            var ci = new AdviceGroupItemDto();
+                            ci.Id = x.GetInt32(0);
+                            ci.PredicateGroupId = x.GetInt32(1);
+                            ci.ShortDescription = x.GetString(2);
                             return ci;
                         }
                     );

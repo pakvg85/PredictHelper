@@ -106,11 +106,11 @@
                                         CellStyle="{StaticResource DataGridEditableCellStyle}"
                                         Width="300"
                                         Binding="{Binding Path=Text}"/>
-                    <DataGridTextColumn Header="Сторона" 
+                    <!--<DataGridTextColumn Header="Сторона" 
                                         CellStyle="{StaticResource DataGridEditableCellStyle}"
                                         Width="60"
-                                        Binding="{Binding Path=SideGroupId}"/>
-                    <!--<DataGridComboBoxColumn Header="Сторона"
+                                        Binding="{Binding Path=SideGroupId}"/>-->
+                    <DataGridComboBoxColumn Header="Сторона"
                                             ItemsSource="{x:Static local:CommonExtensions.GetEnumTypes}" 
                                             SelectedItemBinding="{Binding SideGroup}">
                         <DataGridComboBoxColumn.EditingElementStyle>
@@ -118,11 +118,11 @@
                                 <Setter Property="IsEditable" Value="True"/>
                             </Style>
                         </DataGridComboBoxColumn.EditingElementStyle>
-                    </DataGridComboBoxColumn>-->
-                    <!--<DataGridTextColumn Header="Группа советов"
-                                        CellStyle="{StaticResource DataGridReadonlyCellStyle}"
+                    </DataGridComboBoxColumn>
+                    <DataGridTextColumn Header="Id группы советов"
+                                        CellStyle="{StaticResource DataGridEditableCellStyle}"
                                         Width="100"
-                                        Binding="{Binding Path=AdviceGroup.ShortDescription}"/>-->
+                                        Binding="{Binding Path=AdviceGroupId}"/>
                     <DataGridTextColumn Header="Совпадений" 
                                         CellStyle="{StaticResource DataGridReadonlyCellStyle}"
                                         IsReadOnly="True"
